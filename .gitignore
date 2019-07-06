@@ -35,3 +35,10 @@ dependency-reduced-pom.xml
 
 # Mac OS file system files
 .DS_Store
+
+# IntelliJ Files
+.idea
+*.iml
+
+# Maven Files
+target
