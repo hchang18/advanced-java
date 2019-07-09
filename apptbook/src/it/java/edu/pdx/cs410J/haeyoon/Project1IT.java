@@ -22,11 +22,12 @@ public class Project1IT extends InvokeMainTestCase {
   }
 
   private String owner = "Pete the Cat";
-  private String desc = "birthday party";
+  private String desc = "Birth day party";
   private String beginDate = "12/11/2018";
   private String beginTime = "12:01";
   private String endDate = "12/13/2018";
   private String endTime = "2:36";
+
   /**
    * Tests that invoking the main method with no arguments issues an error
    */
@@ -73,11 +74,6 @@ public class Project1IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(1));
   }
 
-  @Test
-  public void whenPrintIsFlaggedAndREADMEIsNotFlaggedAndArgsAreExactly7CreateAppointmentAndPrintAppointmentDesc(){
-    MainMethodResult result = invokeMain(Project1.class, "-print", owner, desc, beginDate, beginTime, endDate, endTime);
-    assertThat(result.getTextWrittenToStandardOut(), containsString("This method is not implemented yet"));
-  }
 
   /**
    * Tests that invoking the main method with no options but arguments
@@ -96,11 +92,59 @@ public class Project1IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(1));
   }
 
-  @Test
-  public void whenNoOptionIsFlaggedAndArgsAreExactly6CreateAppointmentAndAppointmentBook(){
-    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
-    assertThat(result.getExitCode(), equalTo(0));
+
+  /**
+   * Tests that Description is not null or empty or " ".
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void whenOwnerIsNullThrowIllegalArgumentException(){
+    MainMethodResult result = invokeMain(Project1.class, null, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be null"));
   }
 
+  @Test(expected=IllegalArgumentException.class)
+  public void whenOwnerIsEmptyThrowIllegalArgumentException(){
+    MainMethodResult result = invokeMain(Project1.class, "", desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be empty"));
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void whenOwnerIsBlankThrowIllegalArgumentsException(){
+    MainMethodResult result = invokeMain(Project1.class, "      ", desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be blank"));
+  }
+
+
+   /**
+   * Tests that Description is not null or empty or " ".
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void whenDescriptionIsNullThrowIllegalArgumentException(){
+    MainMethodResult result = invokeMain(Project1.class, owner, null, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Description cannot be null"));
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void whenDescriptionIsEmptyThrowIllegalArgumentException(){
+    MainMethodResult result = invokeMain(Project1.class, owner, "", beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Description cannot be empty"));
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void whenDescriptionIsBlankThrowIllegalArgumentsException(){
+    MainMethodResult result = invokeMain(Project1.class, owner, "     ", beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Description cannot be blank"));
+  }
+
+
+ /**
+   * Tests that format of Dates is valid.
+   */
+
+
+
+ /**
+   * Tests that format of TIme is valid.
+   */
 
 }
