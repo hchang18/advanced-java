@@ -94,11 +94,12 @@ public class Project1IT extends InvokeMainTestCase {
 
 
   /**
-   * Tests that Description is not null or empty or " ".
+   * Tests that Owner is not null or empty or " ".
    */
   @Test(expected = IllegalArgumentException.class)
   public void whenOwnerIsNullThrowIllegalArgumentException(){
-    MainMethodResult result = invokeMain(Project1.class, null, desc, beginDate, beginTime, endDate, endTime);
+    String s = null;
+    MainMethodResult result = invokeMain(Project1.class, s, desc, beginDate, beginTime, endDate, endTime);
     assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be null"));
   }
 
