@@ -21,16 +21,26 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment>{
     }
 
     @Override
+    /**
+    * Returns the name of the owner of this appointment book.
+    */
     public String getOwnerName(){
         return this.owner;
     }
 
     @Override
+    /**
+    * Returns all of the appointments in this appointment book as a
+    * collection of {@link AbstractAppointment}s.
+    */
     public Collection getAppointments(){
         return null;
     }
 
     @Override
+    /**
+    * Adds an appointment to this appointment book
+    */
     public void addAppointment(Appointment appt) {
         apptCollection.add(appt);
     }

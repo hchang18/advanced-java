@@ -254,10 +254,12 @@ public class Project1IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(1));
   }
 
+  /*
   @Test
   public void commandLineArgumentsPrintExpectedAppointmentInfo(){
     MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
     assertThat(result.getTextWrittenToStandardOut(), containsString(desc));
     assertThat(result.getExitCode(), equalTo(0));
   }
+   */
 }

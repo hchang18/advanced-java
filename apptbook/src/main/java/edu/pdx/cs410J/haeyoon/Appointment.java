@@ -25,6 +25,10 @@ public class Appointment extends AbstractAppointment {
   }
 
   @Override
+  /**
+   * Returns a String describing the beginning date and the time of this
+   * appointment
+   */
   public String getBeginTimeString() {
     return this.beginDate + " " + this.beginTime;
     //throw new UnsupportedOperationException("This method is not implemented yet");
@@ -32,12 +36,19 @@ public class Appointment extends AbstractAppointment {
 
 
   @Override
+  /**
+   * Returns a String describing the ending date and time of this appointment
+   */
   public String getEndTimeString() {
     return this.endDate + " " + this.endTime;
     //throw new UnsupportedOperationException("This method is not implemented yet");
   }
 
   @Override
+  /**
+   * Returns a description of this appointment (for instance,
+   * <code> "Kipper's birthday party"</code>
+   */
   public String getDescription() {
     return this.description;
   }

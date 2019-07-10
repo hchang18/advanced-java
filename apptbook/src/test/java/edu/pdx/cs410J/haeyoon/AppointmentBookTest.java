@@ -10,10 +10,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class AppointmentBookTest {
 
-  private AppointmentBook createAppointmentBookOwnedBy(String owner){
-    return new AppointmentBook(owner);
-  }
-
   @Test
   public void AppointmentBookOwnerNamedKipperIsNamedKipper(){}
 

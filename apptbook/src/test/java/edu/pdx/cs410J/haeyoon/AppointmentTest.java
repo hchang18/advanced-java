@@ -10,15 +10,21 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class AppointmentTest {
 
+  private String desc = "Birth day party";
+  private String beginDate = "12/11/2018";
+  private String beginTime = "12:01";
+  private String endDate = "12/13/2018";
+  private String endTime = "2:36";
+
   private Appointment createAppointmentDescribed(String desc){
     return new Appointment(desc, "12/13/2018",
             "1:02", "1/24/2017", "11:49");
   }
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void getBeginTimeStringNeedsToBeImplemented() {
-    Appointment appointment = createAppointmentDescribed("Hello");
-    appointment.getBeginTimeString();
+    Appointment appointment = new Appointment(desc, beginDate, beginTime, endDate, endTime);
+    assertThat(appointment.getBeginTimeString(), equalTo(beginDate + " " + beginTime));
   }
 
   @Test
@@ -29,15 +35,13 @@ public class AppointmentTest {
 
   @Test
   public void forProject1ItIsOkayIfGetBeginTimeReturnsNull() {
-    Appointment appointment = createAppointmentDescribed("Hello");
+    Appointment appointment = new Appointment(desc, beginDate, beginTime, endDate, endTime);
     assertThat(appointment.getBeginTime(), is(nullValue()));
   }
 
-  // description is not null
   @Test
   public void whenDescriptionIsKipperDescriptionIsKipper(){
-    String desc = "Kipper";
-    Appointment appointment = createAppointmentDescribed(desc);
+    Appointment appointment = new Appointment(desc, beginDate, beginTime, endDate, endTime);
     assertThat(appointment.getDescription(), equalTo(desc));
   }
 

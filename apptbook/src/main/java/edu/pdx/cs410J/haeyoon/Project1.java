@@ -138,7 +138,13 @@ public class Project1 {
 
   }
 
-  private static void checkIfTimeFormatIsValid(String timeString) {
+  /**
+   * This method checks whether begin time and end time a
+   * are well formatted. Prints out system error message
+   * if format is not valid
+   * @param timeString
+   */
+  public static void checkIfTimeFormatIsValid(String timeString) {
     //convert string into string array
     String[] timeStrArray = timeString.split(":");
 
@@ -176,7 +182,13 @@ public class Project1 {
     }
   }
 
-  private static void checkIfDateFormatIsValid(String dateString) {
+ /**
+   * This method checks whether begin time and end time a
+   * are well formatted. Print out system error message if
+   * format is not valid.
+   * @param dateString
+   */
+  public static void checkIfDateFormatIsValid(String dateString) {
     //convert string into string array
     String[] dateStrArray = dateString.split("/");
 
