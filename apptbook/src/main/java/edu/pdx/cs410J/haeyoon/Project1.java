@@ -1,5 +1,10 @@
 package edu.pdx.cs410J.haeyoon;
 
+//import java.text.DateFormat;
+//import java.text.ParseException;
+//import java.text.SimpleDateFormat;
+//import java.util.Date;
+
 /**
  * The main class for the CS410J appointment book Project
  */
@@ -13,35 +18,30 @@ public class Project1 {
    */
   public static void main(String[] args){
 
+    String readMe = "Project 1 - Design an Appointment Book Application \n"
+            + "Haeyoon Chang \n"
+            + "In this program, xxx";
     /* Check if any arguments are passed in */
     if(args.length == 0){
       System.err.println("Missing command line arguments");
       System.exit(1);
     }
 
-
     /*
     If first argument is -README,
     print out project description and exit
     */
     if(args[0].equals("-README")){
-      System.out.println("Here is project description.");
+      System.out.println(readMe);
       System.exit(0);
     }
 
-    String owner;
-    String description;
-    String beginDate;
-    String beginTime;
-    String endDate;
-    String endTime;
-
-    owner = "";
-    description = "";
-    beginDate = "";
-    beginTime = "";
-    endDate = "";
-    endTime = "";
+    String owner = "";
+    String description = "";
+    String beginDate = "";
+    String beginTime = "";
+    String endDate = "";
+    String endTime = "";
 
     /*
     If first argument is -print,
@@ -51,7 +51,7 @@ public class Project1 {
     if(args[0].equals("-print")){
 
       if(args[1].equals("-README")){
-        System.out.println("Here is project description.");
+        System.out.println(readMe);
         System.exit(0);
       }
 
@@ -91,41 +91,30 @@ public class Project1 {
 
     }
 
-     /* Validate that owner is in good format */
+    /* Validate that String owner is in good format */
 
     if(owner == null){
       throw new IllegalArgumentException("Owner cannot be null");
     }
 
-    if(owner.equals("")){
-      throw new IllegalArgumentException("Owner cannot be empty");
+    String ownerNoBlank = owner.replaceAll(" ", "");
+    if(ownerNoBlank.equals("")){
+      System.err.println("Owner cannot be empty");
     }
 
-    String checkOwner = owner.replaceAll(" ", "");
-    if(checkOwner.equals("")){
-      throw new IllegalArgumentException("Owner cannot be blank");
-    }
-
-    /* Validate that description is in good format */
-
+    /* Validate that String description is in good format */
     if(description == null){
       throw new IllegalArgumentException("Description cannot be null");
     }
 
-    if(description.equals("")){
-      throw new IllegalArgumentException("Description cannot be empty");
+    String descriptionNoBlank = description.replaceAll(" ", "");
+    if(descriptionNoBlank.equals("")){
+      System.err.println("Description cannot be empty");
     }
 
-    String checkDescription = description.replaceAll(" ", "");
-    if(checkDescription.equals("")){
-      throw new IllegalArgumentException("Description cannot be blank");
-    }
-
-    /* Validate that date is in good format */
-
+    /* Validate that Date is in good format */
 
     /* validate that time is in good format */
-
 
     /* create Appointment and Appointment Book with validated parameters */
 

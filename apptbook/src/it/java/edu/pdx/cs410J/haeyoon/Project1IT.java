@@ -3,9 +3,6 @@ package edu.pdx.cs410J.haeyoon;
 import edu.pdx.cs410J.InvokeMainTestCase;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,14 +42,14 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void whenREADMEIsFlaggedPrintProjectDescAndExit(){
     MainMethodResult result = invokeMain(Project1.class, "-README", owner, desc, beginDate);
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Here is project description"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Project 1"));
     assertThat(result.getExitCode(), equalTo(0));
   }
 
   @Test
   public void whenPrintIsFlaggedAndREADMEIsFlaggedPrintProjectDescAndExit(){
     MainMethodResult result = invokeMain(Project1.class, "-print", "-README", owner, desc, beginDate);
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Here is project description"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Project 1"));
     assertThat(result.getExitCode(), equalTo(0));
   }
 
@@ -98,54 +95,51 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test(expected = IllegalArgumentException.class)
   public void whenOwnerIsNullThrowIllegalArgumentException(){
-    String s = null;
-    MainMethodResult result = invokeMain(Project1.class, s, desc, beginDate, beginTime, endDate, endTime);
-    assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be null"));
+    String ownerString = null;
+    this.owner = ownerString;
+    invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
   }
 
-  @Test(expected=IllegalArgumentException.class)
-  public void whenOwnerIsEmptyThrowIllegalArgumentException(){
-    MainMethodResult result = invokeMain(Project1.class, "", desc, beginDate, beginTime, endDate, endTime);
+  @Test
+  public void whenOwnerIsEmptyStringPrintErrorMessage(){
+    String ownerString = "";
+    this.owner = ownerString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
     assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be empty"));
   }
 
-  @Test(expected=IllegalArgumentException.class)
-  public void whenOwnerIsBlankThrowIllegalArgumentsException(){
-    MainMethodResult result = invokeMain(Project1.class, "      ", desc, beginDate, beginTime, endDate, endTime);
-    assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be blank"));
+  @Test
+  public void whenOwnerIsBlankSpacesPrintErrorMessage(){
+    String ownerString = "        ";
+    this.owner = ownerString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be empty"));
   }
-
 
    /**
-   * Tests that Description is not null or empty or " ".
+   * Tests that description is not null or empty or " ".
    */
   @Test(expected = IllegalArgumentException.class)
-  public void whenDescriptionIsNullThrowIllegalArgumentException(){
-    MainMethodResult result = invokeMain(Project1.class, owner, null, beginDate, beginTime, endDate, endTime);
-    assertThat(result.getTextWrittenToStandardError(), containsString("Description cannot be null"));
+  public void whenDescIsNullThrowIllegalArgumentException(){
+    String descString = null;
+    this.desc = descString;
+    invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
   }
 
-  @Test(expected=IllegalArgumentException.class)
-  public void whenDescriptionIsEmptyThrowIllegalArgumentException(){
-    MainMethodResult result = invokeMain(Project1.class, owner, "", beginDate, beginTime, endDate, endTime);
-    assertThat(result.getTextWrittenToStandardError(), containsString("Description cannot be empty"));
+  @Test
+  public void whenDescIsEmptyStringPrintErrorMessage(){
+    String descString = "";
+    this.desc = descString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("cannot be empty"));
   }
 
-  @Test(expected=IllegalArgumentException.class)
-  public void whenDescriptionIsBlankThrowIllegalArgumentsException(){
-    MainMethodResult result = invokeMain(Project1.class, owner, "     ", beginDate, beginTime, endDate, endTime);
-    assertThat(result.getTextWrittenToStandardError(), containsString("Description cannot be blank"));
+  @Test
+  public void whenDescIsBlankSpacesPrintErrorMessage(){
+    String descString = "        ";
+    this.desc = descString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("cannot be empty"));
   }
-
-
- /**
-   * Tests that format of Dates is valid.
-   */
-
-
-
- /**
-   * Tests that format of TIme is valid.
-   */
 
 }

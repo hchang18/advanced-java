@@ -4,7 +4,7 @@ import edu.pdx.cs410J.AbstractAppointment;
 import edu.pdx.cs410J.AbstractAppointmentBook;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * AppointmentBook class for the CS410J appointment book Project
@@ -13,7 +13,7 @@ import java.util.List;
 public class AppointmentBook extends AbstractAppointmentBook {
 
     private final String owner;
-    private Collection<Appointment> appointmentsCollection;
+    private Collection<Appointment> apptCollection = new ArrayList<Appointment>();
 
     public AppointmentBook(String owner){
         this.owner = owner;
@@ -21,12 +21,12 @@ public class AppointmentBook extends AbstractAppointmentBook {
     }
 
     @Override
-    public String getOwnerName() {
+    public String getOwnerName(){
         return this.owner;
     }
 
     @Override
-    public Collection getAppointments() {
+    public Collection getAppointments(){
         return null;
     }
 

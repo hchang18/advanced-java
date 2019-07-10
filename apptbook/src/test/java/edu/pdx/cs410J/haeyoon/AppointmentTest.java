@@ -41,8 +41,8 @@ public class AppointmentTest {
     assertThat(appointment.getDescription(), equalTo(desc));
   }
 
-  // Appointment is created as intended
+  // Appointment is created as expected
 
-  // Appointment is added to AppointmentBook
+  // Appointment is added to AppointmentBook as expected
 
 }
