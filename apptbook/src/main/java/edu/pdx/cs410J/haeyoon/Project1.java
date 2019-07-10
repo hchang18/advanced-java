@@ -92,7 +92,6 @@ public class Project1 {
     }
 
     /* Validate that String owner is in good format */
-
     if(owner == null){
       throw new IllegalArgumentException("Owner cannot be null");
     }
@@ -100,6 +99,7 @@ public class Project1 {
     String ownerNoBlank = owner.replaceAll(" ", "");
     if(ownerNoBlank.equals("")){
       System.err.println("Owner cannot be empty");
+      System.exit(1);
     }
 
     /* Validate that String description is in good format */
@@ -110,11 +110,17 @@ public class Project1 {
     String descriptionNoBlank = description.replaceAll(" ", "");
     if(descriptionNoBlank.equals("")){
       System.err.println("Description cannot be empty");
+      System.exit(1);
     }
 
     /* Validate that Date is in good format */
+    checkIfDateFormatIsValid(beginDate);
+    checkIfDateFormatIsValid(endDate);
 
     /* validate that time is in good format */
+    checkIfTimeFormatIsValid(beginTime);
+    checkIfTimeFormatIsValid(endTime);
+
 
     /* create Appointment and Appointment Book with validated parameters */
 
@@ -127,6 +133,91 @@ public class Project1 {
 
     AppointmentBook newAppointmentBook = new AppointmentBook(owner);
 
+  }
+
+  private static void checkIfTimeFormatIsValid(String timeString) {
+    //convert string into string array
+    String[] timeStrArray = timeString.split(":");
+
+    // check if all two parts of hh and mm exists
+    if(timeStrArray.length != 2){
+      System.err.println("HH mm : either missing one or too many");
+      System.exit(1);
+    }
+
+    if(timeStrArray[0].length() != 2 || timeStrArray[1].length() != 2){
+      System.err.print("Digit out of bound");
+      System.exit(1);
+    }
+
+    // check hour and minute are valid input
+    int hour = 0;
+    int minute = 0;
+
+    try{
+      hour = Integer.parseInt(timeStrArray[0]);
+      minute = Integer.parseInt(timeStrArray[1]);
+    } catch(NumberFormatException e){
+      System.err.println("This is not a number");
+    }
+
+    if(hour < 1 || hour > 23){
+      System.err.println("Invalid hour");
+      System.exit(1);
+    }
+
+    if(minute < 1 || minute > 59){
+      System.err.println("Invalid minute");
+      System.exit(1);
+    }
+  }
+
+  private static void checkIfDateFormatIsValid(String dateString) {
+    //convert string into string array
+    String[] dateStrArray = dateString.split("/");
+
+    // check that there are only three entries - month, day and year
+    if(dateStrArray.length != 3){
+      System.err.println("MM dd yyyy: either missing one or too many");
+      System.exit(1);
+    }
+
+    // check month, day and year are within the bound
+    if(dateStrArray[0].length() < 1 || dateStrArray[0].length() > 2
+            || dateStrArray[1].length() < 1 || dateStrArray[1].length() > 2
+            || dateStrArray[2].length() != 4){
+      System.err.println("Digit out of bound");
+      System.exit(1);
+    }
+
+
+    // check month, day and year are in valid range
+    int month = 0;
+    int day = 0;
+    int year = 0;
+
+    try{
+      month = Integer.parseInt(dateStrArray[0]);
+      day = Integer.parseInt(dateStrArray[1]);
+      year = Integer.parseInt(dateStrArray[2]);
+    } catch(NumberFormatException e){
+      System.err.println("number is required");
+    }
+
+    if(month < 1 || month > 12){
+      System.err.println("Invalid month");
+      System.exit(1);
+    }
+
+    if(day < 1 || day > 31){
+      System.err.println("Invalid day");
+      System.exit(1);
+    }
+
+    if(year < 1 || year > 9999){
+      System.err.println("Invalid year");
+      System.exit(1);
+    }
   }
 
 }

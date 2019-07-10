@@ -106,6 +106,7 @@ public class Project1IT extends InvokeMainTestCase {
     this.owner = ownerString;
     MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
     assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be empty"));
+    assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
@@ -114,6 +115,7 @@ public class Project1IT extends InvokeMainTestCase {
     this.owner = ownerString;
     MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
     assertThat(result.getTextWrittenToStandardError(), containsString("Owner cannot be empty"));
+    assertThat(result.getExitCode(), equalTo(1));
   }
 
    /**
@@ -132,6 +134,7 @@ public class Project1IT extends InvokeMainTestCase {
     this.desc = descString;
     MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
     assertThat(result.getTextWrittenToStandardError(), containsString("cannot be empty"));
+    assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
@@ -140,6 +143,113 @@ public class Project1IT extends InvokeMainTestCase {
     this.desc = descString;
     MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
     assertThat(result.getTextWrittenToStandardError(), containsString("cannot be empty"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  /**
+  * Tests that date is in good format.
+  */
+  @Test
+  public void whenOneOfMMddyyyyisMissingPrintErrorMessage(){
+    String dateString = "12/2/1111/1111";
+    this.beginDate = dateString;
+    this.endDate = dateString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("MM dd yyyy: either missing one or too many"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void whenMonthEntryIsNot1or2DigitsPrintErrorMessage(){
+    String dateString = "123/11/2018";
+    this.beginDate = dateString;
+    this.endDate = dateString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Digit out of bound"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void whenMonthIsInvalidEntryPrintErrormessage(){
+    String dateString = "15/23/2019";
+    this.beginDate = dateString;
+    this.endDate = dateString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid month"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void whenDayEntryIsNot1or2DigitsPrintErrorMessage(){
+    String dateString = "12/1111/2018";
+    this.beginDate = dateString;
+    this.endDate = dateString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Digit out of bound"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void whenDayIsInvalidEntryPrintErrormessage(){
+    String dateString = "12/41/2019";
+    this.beginDate = dateString;
+    this.endDate = dateString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid day"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void whenYearEntryIsNot4DigitsPrintErrorMessage(){
+    String dateString = "05/12/201811";
+    this.beginDate = dateString;
+    this.endDate = dateString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Digit out of bound"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void whenYearIsInvalidEntryPrintErrormessage(){
+    String dateString = "06/02/0000";
+    this.beginDate = dateString;
+    this.endDate = dateString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid year"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  /**
+   * Test that time is in good format
+   */
+  @Test
+  public void whenOneOfHHmmIsMissingPrintErrorMessage(){
+    String timeString = "11:12:13";
+    this.beginTime = timeString;
+    this.endTime = timeString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("HH mm : either missing one or too many"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void whenHHEntryIsNot1or2DigitsPrintErrorMessage(){
+    String timeString = ":11";
+    this.beginTime = timeString;
+    this.endTime = timeString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Digit out of bound"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void whenHHIsInvalidEntryPrintErrormessage(){
+    String timeString = "25:11";
+    this.beginTime = timeString;
+    this.endTime = timeString;
+    MainMethodResult result = invokeMain(Project1.class, owner, desc, beginDate, beginTime, endDate, endTime);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid hour"));
+    assertThat(result.getExitCode(), equalTo(1));
   }
 
 }
