@@ -10,10 +10,10 @@ import java.util.ArrayList;
  * AppointmentBook class for the CS410J appointment book Project
  */
 
-public class AppointmentBook extends AbstractAppointmentBook {
+public class AppointmentBook extends AbstractAppointmentBook<Appointment>{
 
     private final String owner;
-    private Collection<Appointment> apptCollection = new ArrayList<Appointment>();
+    private Collection<Appointment> apptCollection = new ArrayList<>();
 
     public AppointmentBook(String owner){
         this.owner = owner;
@@ -31,7 +31,7 @@ public class AppointmentBook extends AbstractAppointmentBook {
     }
 
     @Override
-    public void addAppointment(AbstractAppointment abstractAppointment) {
-
+    public void addAppointment(Appointment appt) {
+        apptCollection.add(appt);
     }
 }

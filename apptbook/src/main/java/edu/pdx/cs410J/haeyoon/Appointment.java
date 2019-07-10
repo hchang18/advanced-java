@@ -8,11 +8,11 @@ import edu.pdx.cs410J.AbstractAppointment;
 
 public class Appointment extends AbstractAppointment {
 
-  private final String description;
-  private final String beginDate;
-  private final String beginTime;
-  private final String endDate;
-  private final String endTime;
+  private String description;
+  private String beginDate;
+  private String beginTime;
+  private String endDate;
+  private String endTime;
 
   public Appointment(String description, String beginDate, String beginTime, String endDate, String endTime){
 

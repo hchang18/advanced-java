@@ -20,7 +20,9 @@ public class Project1 {
 
     String readMe = "Project 1 - Design an Appointment Book Application \n"
             + "Haeyoon Chang \n"
-            + "In this program, xxx";
+            + "Arguments are: owner, description, beginTime and endTime (in this order)\n"
+            + "Optons are: -print or -README\n"
+            + "Date and time should be in the format: mm/dd/yyyy hh:mm\n";
     /* Check if any arguments are passed in */
     if(args.length == 0){
       System.err.println("Missing command line arguments");
@@ -123,8 +125,9 @@ public class Project1 {
 
 
     /* create Appointment and Appointment Book with validated parameters */
-
     Appointment newAppointment = new Appointment(description, beginDate, beginTime, endDate, endTime);
+    //System.out.println(newAppointment);
+
 
     if(args[0].equals("-print")){
       String s = newAppointment.getDescription();
@@ -145,8 +148,9 @@ public class Project1 {
       System.exit(1);
     }
 
-    if(timeStrArray[0].length() != 2 || timeStrArray[1].length() != 2){
-      System.err.print("Digit out of bound");
+    if(timeStrArray[0].length() < 1 || timeStrArray[0].length() > 2
+            || timeStrArray[1].length() < 1 || timeStrArray[1].length() > 2){
+      System.err.print("Time: Digit out of bound");
       System.exit(1);
     }
 
@@ -161,12 +165,12 @@ public class Project1 {
       System.err.println("This is not a number");
     }
 
-    if(hour < 1 || hour > 23){
+    if(hour < 0 || hour > 23){
       System.err.println("Invalid hour");
       System.exit(1);
     }
 
-    if(minute < 1 || minute > 59){
+    if(minute < 0 || minute > 59){
       System.err.println("Invalid minute");
       System.exit(1);
     }
@@ -186,7 +190,7 @@ public class Project1 {
     if(dateStrArray[0].length() < 1 || dateStrArray[0].length() > 2
             || dateStrArray[1].length() < 1 || dateStrArray[1].length() > 2
             || dateStrArray[2].length() != 4){
-      System.err.println("Digit out of bound");
+      System.err.println("Date: Digit out of bound");
       System.exit(1);
     }
 
