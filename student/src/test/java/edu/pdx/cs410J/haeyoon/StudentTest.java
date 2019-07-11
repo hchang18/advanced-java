@@ -25,17 +25,26 @@ public class StudentTest
     assertThat(pat.getName(), equalTo(name));
   }
 
+  // When name is not defined, throw null exceptions
+  // @Test is imported from junit.Test
   @Test(expected = NullPointerException.class)
   public void whenNameIsNullThrowANullPointerException(){
     String name = null;
     createStudentNamed(name);
-    
   }
 
-  // Test that you can't create a student without a name
+  // When GPA is less than zero, issue a "range error"
+  // There were no GPAOutOfBoundsException so it was created in main on the way
+  @Test(expected = GPAOutOfBoundsException.class)
+  public void whenGPAIsLessThanZeroThrowGPAOutOfBoundsException(){
+    double gpa = -1.0;
+    new Student("name", new ArrayList<>(), gpa, "");
+  }
+
 
   // When GPA is not a valid double, exit with an error message saying that GPA must be decimal
-
+  @Test(expected = GPAOutOfBoundsException.class)
+  public void when
   // When there are not enough command line arguments, exit with an error message
 
   // When GPA is less than zero, issue a "range error"
