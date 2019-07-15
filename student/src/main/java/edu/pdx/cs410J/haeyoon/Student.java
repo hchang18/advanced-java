@@ -2,13 +2,16 @@ package edu.pdx.cs410J.haeyoon;
 
 import edu.pdx.cs410J.lang.Human;
 
-import java.util.ArrayList;
+import java.util.List;
                                                                                     
 /**                                                                                 
  * This class is represents a <code>Student</code>.                                 
  */                                                                                 
 public class Student extends Human {                                                
-                                                                                    
+
+  private final double gpa;
+  private final Gender gender;
+  private final List<String> classes;
   /**                                                                               
    * Creates a new <code>Student</code>                                             
    *                                                                                
@@ -22,7 +25,7 @@ public class Student extends Human {
    * @param gender                                                                  
    *        The student's gender ("male" or "female", case insensitive)             
    */                                                                               
-  public Student(String name, ArrayList<String> classes, double gpa, String gender) {
+  public Student(String name, List<String> classes, double gpa, Gender gender) {
     super(name);
 
     if (name == null){
@@ -31,7 +34,13 @@ public class Student extends Human {
 
     if (gpa < 0.0){
       throw new GPAOutOfBoundsException("GPA cannot be less than zero.");
+    } else if(gpa > 4.0){
+      throw new GPAOutOfBoundsException("GPA cannot be more than 4.0");
     }
+
+    this.gpa = gpa;
+    this.gender = gender;
+    this.classes = List.copyOf(classes);
   }
 
   /**                                                                               

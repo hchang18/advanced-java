@@ -1,9 +1,9 @@
 package edu.pdx.cs410J.haeyoon;
 
 import edu.pdx.cs410J.InvokeMainTestCase;
-import edu.junit.Ignore;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.testng.reporters.jq.Main;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -43,4 +43,30 @@ public class StudentIT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(0));
   }
 
+  @Test
+  public void unsupportedGenderPrintsErrorMessage() {
+    MainMethodResult result = invokeMain(Student.class, "Name", "Unsupported", "3.64", "Algorithms", "Operating Systems", "Java");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Unsupported gender"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  public void femaleGenderReturnExitCodeZero() {
+    MainMethodResult result = invokeMain(Student.class, "Name","female", "3.64", "Algorithms", "Operating Systems", "Java");
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  public void maleGenderReturnExitCodeZero() {
+    MainMethodResult result = invokeMain(Student.class, "Name","male", "3.64", "Algorithms", "Operating Systems", "Java");
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  public void maleGenderReturnExitCodeZero() {
+    MainMethodResult result = invokeMain(Student.class, "Name","other", "3.64", "Algorithms", "Operating Systems", "Java");
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
 }
+
