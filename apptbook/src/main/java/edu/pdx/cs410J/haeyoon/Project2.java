@@ -2,7 +2,9 @@ package edu.pdx.cs410J.haeyoon;
 
 //import com.google.common.annotations.VisibleForTesting;
 
-import java.io.PrintWriter;
+import edu.pdx.cs410J.ParserException;
+
+import java.io.*;
 import java.text.*;
 import java.util.*;
 
@@ -70,9 +72,15 @@ public class Project2 {
     private boolean printFlag = false;
 
     /**
+     * Should the program read/write to textfile?
+     */
+    private boolean textFileFlag;
+
+    /**
      * The name of the text file to parse
      */
     private String textFileName = null;
+
 
     /////////////// Constructors //////////
 
@@ -97,6 +105,13 @@ public class Project2 {
      */
     private void setPrint(boolean print) {
         this.printFlag = print;
+    }
+
+    /**
+     * Set whether or not the program should read/write to file
+     */
+    private void setTextFileFlag(boolean textFileFlag){
+        this.textFileFlag = textFileFlag;
     }
 
     /**
@@ -149,6 +164,27 @@ public class Project2 {
     }
 
     /**
+     * Get the name of the textfile to read/write the appointment book
+     */
+    public String getTextFileName(){
+        return this.textFileName;
+    }
+
+    /**
+     * Get the name of the person who owns the appointment book
+     */
+    public String getOwner(){
+        return this.owner;
+    }
+
+    /**
+     * Get the description of the appointment
+     */
+    public String getDescription(){
+        return this.description;
+    }
+
+    /**
      * Get the date when appointment begins
      */
     public String getBeginDate() {
@@ -178,7 +214,7 @@ public class Project2 {
 
 
     /**
-     * Validate the state of this project
+     * Validate the arguments passed into the project
      *
      * @throws IllegalStateException if any state is incorrect or missing
      */
@@ -208,6 +244,30 @@ public class Project2 {
             throw new IllegalStateException("Missing end time");
         }
     }
+
+    /**
+     * Validate the Date and Time Format using DateFormat package
+     * @param Date
+     * @param Time
+     */
+    public void validateDateAndTime(String Date, String Time) {
+
+        String pattern = "MM/dd/yyyy HH:mm";
+        String TimeString = Date + " " + Time;
+
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+        formatter.setLenient(false);
+
+        try {
+            Date DateTime = formatter.parse(TimeString);
+
+        } catch(ParseException e){
+            err.println("** Malformatted date and time: " + TimeString);
+            System.exit(1);
+        }
+
+    }
+
 
 
     /////////////// Main Program //////////
@@ -252,23 +312,39 @@ public class Project2 {
         Project2 project2 = new Project2();
 
         // Parse the command line
-        for (int i = 0; i < args.length; i++){
+        for (int i = 0; i < args.length; i++) {
+
             // Check for options first
-            if(args[i].equals("-textFile")){
-                if(++i >= args.length){
+            if (args[i].equals("-textFile")) {
+                project2.setTextFileFlag(true);
+
+                if (++i >= args.length) {
                     usage("No text file specified");
                 }
 
-                project2.setTextfile(args[i]);
-
                 // check if the file name ends with .txt
+                if (args[i].endsWith(".txt")) {
+                    project2.setTextfile(args[i]);
 
-            } else if(args[i].equals("-print")){
+                } else {
+                    err.println("This is not a text file: " + args[i]);
+                }
+
+                // check if the file exists in the directory
+                File file = new File(project2.getTextFileName());
+                if (!file.exists()) {
+                    err.println("** Text file " + project2.getTextFileName() + " does not exist");
+                }
+
+            } else if (args[i].equals("-print")) {
                 project2.setPrint(true);
 
-            } else if(args[i].equals("-README")){
+            } else if (args[i].equals("-README")) {
                 project2.setReadme(true);
                 break;
+
+            } else if (args[i].startsWith("-")){
+                usage("Unknown commandline option");
 
             } else if (project2.owner == null){
                 project2.setOwner(args[i]);
@@ -287,11 +363,15 @@ public class Project2 {
 
             } else if (project2.endTime == null){
                 project2.setEndTime(args[i]);
-            } else {}
+
+            } else {
+                usage("Spurious command line: " + args[i]);
+            }
         }
 
         if (project2.readme == true){
             README();
+            System.exit(0);
         }
 
         // Make sure that user entered enough information
@@ -300,35 +380,57 @@ public class Project2 {
 
         } catch(IllegalStateException ex){
             usage(ex.getMessage());
-            return;
+            System.exit(1);
         }
 
         // Check if the date and time are in good format
-
-        String pattern = "MM/dd/yyyy HH:mm";
-        String beginTimeString = project2.getBeginDate() + " " + project2.getBeginTime();
-        String endTimeString = project2.getEndDate() + " " + project2.getEndTime();
-
-        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-        formatter.setLenient(false);
-
         try {
-            Date beginDateTime = formatter.parse(beginTimeString);
+            project2.validateDateAndTime(project2.getBeginDate(), project2.getBeginTime());
+            project2.validateDateAndTime(project2.getEndDate(), project2.getEndTime());
 
-        } catch(ParseException e){
-            err.println("** Malformatted begin date and time: " + beginTimeString);
+        } catch(IllegalStateException ex){
+            usage(ex.getMessage());
             System.exit(1);
         }
 
-        try {
-            Date endDateTime = formatter.parse(endTimeString);
+        /* create Appointment and Appointment Book with validated parameters */
+        Appointment newAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, project2.endDate, project2.endTime);
 
-        } catch(ParseException e){
-            err.println("** Malformatted end date and time: " + endTimeString);
-            System.exit(1);
+
+        if(project2.printFlag){
+            out.println(newAppointment);
+        }
+
+        AppointmentBook newAppointmentBook = new AppointmentBook(project2.owner);
+        newAppointmentBook.addAppointment(newAppointment);
+
+        // When there is text file provided,
+        // parse it, create appointments and create appointment book
+        if(project2.textFileFlag) {
+            AppointmentBook book = null;
+            try {
+                TextParser parser = new TextParser(project2.textFileName);
+                book = parser.parse();
+
+            } catch (FileNotFoundException ex){
+                err.println("** Could not find file: " + ex.getMessage());
+                System.exit(1);
+
+            } catch (IOException ex){
+                err.println("** IOException during parsing: " + ex.getMessage());
+                System.exit(1);
+
+            } catch (ParserException ex){
+                err.println("** Exception while parsing ");
+                System.exit(1);
+
+            }
+
         }
 
     }
+
+
 
 
 }

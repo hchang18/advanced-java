@@ -17,7 +17,6 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment>{
 
     public AppointmentBook(String owner){
         this.owner = owner;
-        //this.appointmentsCollection;
     }
 
     @Override
