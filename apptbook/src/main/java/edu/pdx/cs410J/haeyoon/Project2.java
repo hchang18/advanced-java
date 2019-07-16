@@ -4,9 +4,14 @@ package edu.pdx.cs410J.haeyoon;
 
 import edu.pdx.cs410J.ParserException;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -28,6 +33,7 @@ public class Project2 {
 
     private static final PrintWriter out = new PrintWriter(System.out, true);
     private static final PrintWriter err = new PrintWriter(System.err, true);
+
 
     /////////////// Instance Fields //////////
 
@@ -80,6 +86,11 @@ public class Project2 {
      * The name of the text file to parse
      */
     private String textFileName = null;
+
+    /**
+     * The name of the text file in file format
+     */
+    private File file = null;
 
 
     /////////////// Constructors //////////
@@ -276,7 +287,7 @@ public class Project2 {
      * Prints usage information about this program
      */
 
-    private static void usage(String s){
+    public static void usage(String s){
         err.println("\n** " + s + "\n");
         err.println("usage: java edu.pdx.cs410J.<login-id>.Project2 [options] <args>");
         err.println("  args are (in this order):");
@@ -328,13 +339,22 @@ public class Project2 {
 
                 } else {
                     err.println("This is not a text file: " + args[i]);
+                    System.exit(1);
                 }
 
                 // check if the file exists in the directory
-                File file = new File(project2.getTextFileName());
-                if (!file.exists()) {
-                    err.println("** Text file " + project2.getTextFileName() + " does not exist");
+                try {
+
+                    File file = new File(project2.getTextFileName());
+
+                    if (!file.exists()) {
+                        out.println("** Text file " + project2.getTextFileName() + " does not exist");
+                    }
+
+                } catch (NullPointerException ex) {
+
                 }
+
 
             } else if (args[i].equals("-print")) {
                 project2.setPrint(true);
@@ -393,23 +413,18 @@ public class Project2 {
             System.exit(1);
         }
 
-        /* create Appointment and Appointment Book with validated parameters */
-        Appointment newAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, project2.endDate, project2.endTime);
+        /*
+        * When there is text file provided,
+        * parse it, create appointments and create appointment book
+        */
+        AppointmentBook book = null;
 
-
-        if(project2.printFlag){
-            out.println(newAppointment);
-        }
-
-        AppointmentBook newAppointmentBook = new AppointmentBook(project2.owner);
-        newAppointmentBook.addAppointment(newAppointment);
-
-        // When there is text file provided,
-        // parse it, create appointments and create appointment book
         if(project2.textFileFlag) {
-            AppointmentBook book = null;
+
+            project2.file = new File(project2.textFileName);
+
             try {
-                TextParser parser = new TextParser(project2.textFileName);
+                TextParser parser = new TextParser(project2.file);
                 book = parser.parse();
 
             } catch (FileNotFoundException ex){
@@ -421,13 +436,47 @@ public class Project2 {
                 System.exit(1);
 
             } catch (ParserException ex){
-                err.println("** Exception while parsing ");
+                err.println("** Exception while parsing " + project2.textFileName + ": " + ex);
                 System.exit(1);
 
             }
 
         }
 
+        /*
+         * Create Appointment and Appointment Book with validated parameters
+         * from command line arguments.
+         */
+        Appointment CLAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, project2.endDate, project2.endTime);
+
+
+        if(project2.printFlag){
+            out.println(CLAppointment);
+        }
+
+        AppointmentBook CLAppointmentBook = new AppointmentBook(project2.owner);
+        CLAppointmentBook.addAppointment(CLAppointment);
+        out.println(CLAppointment);
+
+        /*
+         * The owner name given on the command line is different than
+         * the one found in the text file.
+         */
+
+        if (!CLAppointmentBook.getOwnerName().equals(book.getOwnerName())){
+            err.println("The owner name given on the command line: " + CLAppointmentBook.getOwnerName());
+            err.println("and the owner name found on the text file: " + book.getOwnerName());
+
+            if (book.getOwnerName() == null){
+                book = CLAppointmentBook;
+            }
+
+        } else {
+            book.addAppointment(CLAppointment);
+        }
+
+        ArrayList apptList = new ArrayList(book.getAppointments());
+        out.println(apptList.get(0));
     }
 
 

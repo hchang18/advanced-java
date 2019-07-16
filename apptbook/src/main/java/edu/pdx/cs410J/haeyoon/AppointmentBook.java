@@ -33,7 +33,7 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment>{
     * collection of {@link AbstractAppointment}s.
     */
     public Collection getAppointments(){
-        return null;
+        return this.apptCollection;
     }
 
     @Override
@@ -41,6 +41,6 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment>{
     * Adds an appointment to this appointment book
     */
     public void addAppointment(Appointment appt) {
-        apptCollection.add(appt);
+        this.apptCollection.add(appt);
     }
 }
