@@ -30,7 +30,7 @@ public class Appointment extends AbstractAppointment {
    * appointment
    */
   public String getBeginTimeString() {
-    return this.beginDate + " " + this.beginTime;
+    return this.beginDate.trim() + ", " + this.beginTime.trim();
     //throw new UnsupportedOperationException("This method is not implemented yet");
   }
 
@@ -40,7 +40,7 @@ public class Appointment extends AbstractAppointment {
    * Returns a String describing the ending date and time of this appointment
    */
   public String getEndTimeString() {
-    return this.endDate + " " + this.endTime;
+    return this.endDate.trim() + ", " + this.endTime.trim();
     //throw new UnsupportedOperationException("This method is not implemented yet");
   }
 

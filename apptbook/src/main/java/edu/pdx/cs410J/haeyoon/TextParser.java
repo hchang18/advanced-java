@@ -16,7 +16,7 @@ import static edu.pdx.cs410J.haeyoon.Project2.usage;
 public class TextParser implements AppointmentBookParser{
 
     private AppointmentBook book;    // The appointment book we are creating
-    private File apptFile;
+    private File fip;
 
     /**
      * Create an <code> TextParser </code> that creates a <code>AppointmentBook</code>
@@ -24,7 +24,7 @@ public class TextParser implements AppointmentBookParser{
      */
     public TextParser(File s) throws IOException {
         this.book = new AppointmentBook(null);
-        this.apptFile = s;
+        this.fip = s;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class TextParser implements AppointmentBookParser{
 
         try {
 
-            in = new BufferedReader(new FileReader(this.apptFile));
+            in = new BufferedReader(new FileReader(this.fip));
             StringTokenizer st;
 
             while (true) {
@@ -53,11 +53,11 @@ public class TextParser implements AppointmentBookParser{
                 proj2.setOwner(st.nextToken(","));
 
                 if (this.book.getOwnerName() == null) {
-                    System.out.println("book owner name is: " + proj2.getOwner());
+                    //System.out.println("book owner name is: " + proj2.getOwner());
                     this.book = new AppointmentBook(proj2.getOwner());
 
                 } else {
-                    if (this.book.getOwnerName() == proj2.getOwner()) {
+                    if (this.book.getOwnerName().equals(proj2.getOwner())) {
                     } else {
                         System.err.println("This book belongs to: " + this.book.getOwnerName());
                         System.err.println("Appointment to be added is for " + proj2.getOwner());
@@ -102,7 +102,7 @@ public class TextParser implements AppointmentBookParser{
                 }
 
                 Appointment appointment = new Appointment(proj2.getDescription(), proj2.getBeginDate(), proj2.getBeginTime(), proj2.getEndDate(), proj2.getEndTime());
-                System.out.println(appointment);
+                //System.out.println(appointment);
 
                 this.book.addAppointment(appointment);
             }

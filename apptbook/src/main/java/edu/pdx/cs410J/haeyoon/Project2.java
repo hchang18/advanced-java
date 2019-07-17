@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -456,30 +455,43 @@ public class Project2 {
 
         AppointmentBook CLAppointmentBook = new AppointmentBook(project2.owner);
         CLAppointmentBook.addAppointment(CLAppointment);
-        out.println(CLAppointment);
+        //out.println(CLAppointment);
 
         /*
          * The owner name given on the command line is different than
          * the one found in the text file.
          */
-
         if (!CLAppointmentBook.getOwnerName().equals(book.getOwnerName())){
-            err.println("The owner name given on the command line: " + CLAppointmentBook.getOwnerName());
-            err.println("and the owner name found on the text file: " + book.getOwnerName());
 
+            // if TextParser returns empty Appointment Book
+            // fill it with appointment from command line
             if (book.getOwnerName() == null){
                 book = CLAppointmentBook;
+            } else {
+                err.println("The owner name given on the command line: " + CLAppointmentBook.getOwnerName());
+                err.println("and the owner name found on the text file: " + book.getOwnerName());
             }
 
         } else {
             book.addAppointment(CLAppointment);
         }
 
-        ArrayList apptList = new ArrayList(book.getAppointments());
-        out.println(apptList.get(0));
+        /* Print out appointment list from a appointment book
+
+        ArrayList<Appointment> apptList = new ArrayList<Appointment>(book.getAppointments());
+        for (Appointment appt: apptList){
+            out.println(appt);
+        }
+
+        */
+
+        try {
+            TextDumper dumper = new TextDumper(project2.textFileName);
+            dumper.dump(book);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
-
-
-
 
 }
