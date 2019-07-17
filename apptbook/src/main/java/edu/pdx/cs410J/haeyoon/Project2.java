@@ -79,7 +79,7 @@ public class Project2 {
     /**
      * Should the program read/write to textfile?
      */
-    private boolean textFileFlag;
+    private boolean textFileFlag = false;
 
     /**
      * The name of the text file to parse
@@ -91,6 +91,10 @@ public class Project2 {
      */
     private File file = null;
 
+    /**
+     * Appointment belong to project class
+     */
+    private AppointmentBook book = null;
 
     /////////////// Constructors //////////
 
@@ -230,28 +234,28 @@ public class Project2 {
      */
     public void validate(){
 
-        if (owner == null){
-            throw new IllegalStateException("Missing owner name");
+        if (owner == null || owner.trim().equals("")){
+            throw new IllegalStateException("Missing argument(s)");
         }
 
-        if (description == null){
-            throw new IllegalStateException("Missing description");
+        if (description == null || description.trim().equals("")){
+            throw new IllegalStateException("Missing argument(s)");
         }
 
-        if (beginDate == null){
-            throw new IllegalStateException("Missing begin date");
+        if (beginDate == null || beginDate.trim().equals("")){
+            throw new IllegalStateException("Missing argument(s)");
         }
 
-        if (endDate == null){
-            throw new IllegalStateException("Missing end date");
+        if (endDate == null || endDate.trim().equals("")){
+            throw new IllegalStateException("Missing argument(s)");
         }
 
-        if (beginTime == null){
-            throw new IllegalStateException("Missing begin time");
+        if (beginTime == null || beginTime.trim().equals("")){
+            throw new IllegalStateException("Missing argument(s)");
         }
 
-        if (endTime == null){
-            throw new IllegalStateException("Missing end time");
+        if (endTime == null || endTime.trim().equals("")){
+            throw new IllegalStateException("Missing argument(s)");
         }
     }
 
@@ -298,9 +302,10 @@ public class Project2 {
         err.println("    -textFile file         Where to read/write the appointment book");
         err.println("    -print                 Prints a description of the new appointment");
         err.println("    -README                Prints a README for this project and exits");
-        err.println("    -comment comment   Info for the Grader");
         err.println("");
         err.println("Dates and times should be in the format: mm/dd/yyyy hh:mm");
+        err.println("Elements in each line of the text file should be in the following format: ");
+        err.println("  owner, description, begin date (mm/dd/yyyy), begin time (hh:mm), end date (mm/dd/yyyy), end time (hh:mm)");
         System.exit(1);
     }
 
@@ -320,6 +325,12 @@ public class Project2 {
      */
     public static void main(String[] args){
         Project2 project2 = new Project2();
+
+        // Check if any arguments are passed in
+        if(args.length == 0){
+            System.err.println("Missing command line arguments");
+            System.exit(1);
+        }
 
         // Parse the command line
         for (int i = 0; i < args.length; i++) {
@@ -363,7 +374,7 @@ public class Project2 {
                 break;
 
             } else if (args[i].startsWith("-")){
-                usage("Unknown commandline option");
+                usage("Unknown command line option");
 
             } else if (project2.owner == null){
                 project2.setOwner(args[i]);
@@ -384,7 +395,7 @@ public class Project2 {
                 project2.setEndTime(args[i]);
 
             } else {
-                usage("Spurious command line: " + args[i]);
+                usage("Extraneous command line argument(s): " + args[i]);
             }
         }
 
@@ -413,18 +424,29 @@ public class Project2 {
         }
 
         /*
+         * Create Appointment and Appointment Book with validated parameters
+         * from command line arguments.
+         */
+        Appointment CLAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, project2.endDate, project2.endTime);
+
+        if(project2.printFlag){
+            out.println(CLAppointment);
+        }
+
+        /*
         * When there is text file provided,
         * parse it, create appointments and create appointment book
+        * update the appointment list with the most recently command line added appointment
+        * and dump it into the text file
         */
-        AppointmentBook book = null;
 
-        if(project2.textFileFlag) {
+        if(project2.textFileFlag == true) {
 
             project2.file = new File(project2.textFileName);
 
             try {
                 TextParser parser = new TextParser(project2.file);
-                book = parser.parse();
+                project2.book = parser.parse();
 
             } catch (FileNotFoundException ex){
                 err.println("** Could not find file: " + ex.getMessage());
@@ -440,58 +462,51 @@ public class Project2 {
 
             }
 
-        }
+            // check the owner name from command line and the owner name from
+            // appointment book generated by the text file are the same
+            // if so, add command line appointment into the book.
+            if(project2.book.getOwnerName() == null) {
+                project2.book = new AppointmentBook(project2.owner);
+                project2.book.addAppointment(CLAppointment);
 
-        /*
-         * Create Appointment and Appointment Book with validated parameters
-         * from command line arguments.
-         */
-        Appointment CLAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, project2.endDate, project2.endTime);
-
-
-        if(project2.printFlag){
-            out.println(CLAppointment);
-        }
-
-        AppointmentBook CLAppointmentBook = new AppointmentBook(project2.owner);
-        CLAppointmentBook.addAppointment(CLAppointment);
-        //out.println(CLAppointment);
-
-        /*
-         * The owner name given on the command line is different than
-         * the one found in the text file.
-         */
-        if (!CLAppointmentBook.getOwnerName().equals(book.getOwnerName())){
-
-            // if TextParser returns empty Appointment Book
-            // fill it with appointment from command line
-            if (book.getOwnerName() == null){
-                book = CLAppointmentBook;
             } else {
-                err.println("The owner name given on the command line: " + CLAppointmentBook.getOwnerName());
-                err.println("and the owner name found on the text file: " + book.getOwnerName());
+
+                if (project2.book.getOwnerName().equals(project2.owner)) {
+                    project2.book.addAppointment(CLAppointment);
+
+                } else {
+                    err.println("The owner name given on the commandline: " + project2.owner);
+                    err.println("and the owner name found on the text file: " + project2.book.getOwnerName());
+                }
+            }
+            /*
+             * Dump an appointment book into text file
+             */
+            try {
+                TextDumper dumper = new TextDumper(project2.textFileName);
+                dumper.dump(project2.book);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
+
         } else {
-            book.addAppointment(CLAppointment);
+
+            project2.book = new AppointmentBook(project2.owner);
+            project2.book.addAppointment(CLAppointment);
+
         }
 
         /* Print out appointment list from a appointment book
 
-        ArrayList<Appointment> apptList = new ArrayList<Appointment>(book.getAppointments());
+        out.println("Print out appointment list from an appointment book");
+        ArrayList<Appointment> apptList = new ArrayList<Appointment>(project2.book.getAppointments());
         for (Appointment appt: apptList){
             out.println(appt);
         }
-
         */
-
-        try {
-            TextDumper dumper = new TextDumper(project2.textFileName);
-            dumper.dump(book);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
 }
+

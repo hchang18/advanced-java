@@ -35,7 +35,7 @@ public class TextDumper implements AppointmentBookDumper<AppointmentBook>{
 
         try{
 
-            Writer writer = new FileWriter(fileName);
+            Writer writer = new FileWriter(this.fileName);
 
             // Write appointments in appointment book to the file
             ArrayList<Appointment> apptList = new ArrayList<>(book.getAppointments());

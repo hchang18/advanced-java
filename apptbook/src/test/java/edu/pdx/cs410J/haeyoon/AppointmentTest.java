@@ -16,15 +16,11 @@ public class AppointmentTest {
   private String endDate = "12/13/2018";
   private String endTime = "2:36";
 
-  private Appointment createAppointmentDescribed(String desc){
-    return new Appointment(desc, "12/13/2018",
-            "1:02", "1/24/2017", "11:49");
-  }
 
   @Test
   public void getBeginTimeStringNeedsToBeImplemented() {
     Appointment appointment = new Appointment(desc, beginDate, beginTime, endDate, endTime);
-    assertThat(appointment.getBeginTimeString(), equalTo(beginDate + " " + beginTime));
+    assertThat(appointment.getBeginTimeString(), equalTo(beginDate + ", " + beginTime));
   }
 
   @Test
