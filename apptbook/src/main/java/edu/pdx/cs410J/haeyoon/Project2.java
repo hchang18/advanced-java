@@ -30,8 +30,8 @@ import java.util.Date;
 
 public class Project2 {
 
-    private static final PrintWriter out = new PrintWriter(System.out, true);
-    private static final PrintWriter err = new PrintWriter(System.err, true);
+    //private static final PrintWriter out = new PrintWriter(System.out, true);
+    //private static final PrintWriter err = new PrintWriter(System.err, true);
 
 
     /////////////// Instance Fields //////////
@@ -276,7 +276,7 @@ public class Project2 {
             Date DateTime = formatter.parse(TimeString);
 
         } catch(ParseException e){
-            err.println("** Malformatted date and time: " + TimeString);
+            System.err.println("** Malformatted date and time: " + TimeString);
             System.exit(1);
         }
 
@@ -291,29 +291,29 @@ public class Project2 {
      */
 
     public static void usage(String s){
-        err.println("\n** " + s + "\n");
-        err.println("usage: java edu.pdx.cs410J.<login-id>.Project2 [options] <args>");
-        err.println("  args are (in this order):");
-        err.println("    owner                  The person who owns the appt book");
-        err.println("    description            A description of the appointment");
-        err.println("    beginTime              When the appt begins (24-hour time)");
-        err.println("    endTime                When the appt ends (24-hour time)");
-        err.println("  options are (options may appear in any order):");
-        err.println("    -textFile file         Where to read/write the appointment book");
-        err.println("    -print                 Prints a description of the new appointment");
-        err.println("    -README                Prints a README for this project and exits");
-        err.println("");
-        err.println("Dates and times should be in the format: mm/dd/yyyy hh:mm");
-        err.println("Elements in each line of the text file should be in the following format: ");
-        err.println("  owner, description, begin date (mm/dd/yyyy), begin time (hh:mm), end date (mm/dd/yyyy), end time (hh:mm)");
+        System.err.println("\n** " + s + "\n");
+        System.err.println("usage: java edu.pdx.cs410J.<login-id>.Project2 [options] <args>");
+        System.err.println("  args are (in this order):");
+        System.err.println("    owner                  The person who owns the appt book");
+        System.err.println("    description            A description of the appointment");
+        System.err.println("    beginTime              When the appt begins (24-hour time)");
+        System.err.println("    endTime                When the appt ends (24-hour time)");
+        System.err.println("  options are (options may appear in any order):");
+        System.err.println("    -textFile file         Where to read/write the appointment book");
+        System.err.println("    -print                 Prints a description of the new appointment");
+        System.err.println("    -README                Prints a README for this project and exits");
+        System.err.println("");
+        System.err.println("Dates and times should be in the format: mm/dd/yyyy hh:mm");
+        System.err.println("Elements in each line of the text file should be in the following format: ");
+        System.err.println("  owner, description, begin date (mm/dd/yyyy), begin time (hh:mm), end date (mm/dd/yyyy), end time (hh:mm)");
         System.exit(1);
     }
 
     private static void README(){
-        out.println("This Program optionally reads an appointment book from the contents of a text file");
-        out.println("create a new appointment as specified on the command line, ");
-        out.println("add the appointment to the appointment book");
-        out.println("and then optionally writes the appointment book back to the text file.");
+        System.out.println("This Program optionally reads an appointment book from the contents of a text file");
+        System.out.println("create a new appointment as specified on the command line, ");
+        System.out.println("add the appointment to the appointment book");
+        System.out.println("and then optionally writes the appointment book back to the text file.");
         System.exit(0);
     }
 
@@ -323,8 +323,7 @@ public class Project2 {
      * add the Appointment to the AppointmentBook,
      * and then optionally writes the AppointmentBook back to the text file.
      */
-    public static void main(String[] args){
-        Project2 project2 = new Project2();
+    public static void main(String[] args){ Project2 project2 = new Project2();
 
         // Check if any arguments are passed in
         if(args.length == 0){
@@ -348,7 +347,7 @@ public class Project2 {
                     project2.setTextfile(args[i]);
 
                 } else {
-                    err.println("This is not a text file: " + args[i]);
+                    System.err.println("This is not a text file: " + args[i]);
                     System.exit(1);
                 }
 
@@ -358,7 +357,7 @@ public class Project2 {
                     File file = new File(project2.getTextFileName());
 
                     if (!file.exists()) {
-                        out.println("** Text file " + project2.getTextFileName() + " does not exist");
+                        System.out.println("** Text file " + project2.getTextFileName() + " does not exist");
                     }
 
                 } catch (NullPointerException ex) {
@@ -430,7 +429,7 @@ public class Project2 {
         Appointment CLAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, project2.endDate, project2.endTime);
 
         if(project2.printFlag){
-            out.println(CLAppointment);
+            System.out.println(CLAppointment);
         }
 
         /*
@@ -449,15 +448,15 @@ public class Project2 {
                 project2.book = parser.parse();
 
             } catch (FileNotFoundException ex){
-                err.println("** Could not find file: " + ex.getMessage());
+                System.err.println("** Could not find file: " + ex.getMessage());
                 System.exit(1);
 
             } catch (IOException ex){
-                err.println("** IOException during parsing: " + ex.getMessage());
+                System.err.println("** IOException during parsing: " + ex.getMessage());
                 System.exit(1);
 
             } catch (ParserException ex){
-                err.println("** Exception while parsing " + project2.textFileName + ": " + ex);
+                System.err.println("** Exception while parsing " + project2.textFileName + ": " + ex);
                 System.exit(1);
 
             }
@@ -475,8 +474,8 @@ public class Project2 {
                     project2.book.addAppointment(CLAppointment);
 
                 } else {
-                    err.println("The owner name given on the commandline: " + project2.owner);
-                    err.println("and the owner name found on the text file: " + project2.book.getOwnerName());
+                    System.err.println("The owner name given on the commandline: " + project2.owner);
+                    System.err.println("and the owner name found on the text file: " + project2.book.getOwnerName());
                 }
             }
             /*
@@ -499,10 +498,10 @@ public class Project2 {
 
         /* Print out appointment list from a appointment book
 
-        out.println("Print out appointment list from an appointment book");
+        System.out.println("Print out appointment list from an appointment book");
         ArrayList<Appointment> apptList = new ArrayList<Appointment>(project2.book.getAppointments());
         for (Appointment appt: apptList){
-            out.println(appt);
+            System.out.println(appt);
         }
         */
 

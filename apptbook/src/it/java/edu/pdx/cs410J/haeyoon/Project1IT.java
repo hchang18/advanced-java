@@ -33,7 +33,7 @@ public class Project1IT extends InvokeMainTestCase {
    * Test 2: Your README
    */
   @Test
-  public void whenREADMEIsFlaggedPrintProjectDescAndExit(){
+  public void whenREADMEIsFlaggedPrintProjectDescAndExit() {
     MainMethodResult result = invokeMain(Project2.class, "-README");
     assertThat(result.getTextWrittenToStandardOut(), containsString("This Program optionally"));
     assertThat(result.getExitCode(), equalTo(0));
@@ -114,7 +114,7 @@ public class Project1IT extends InvokeMainTestCase {
    * Test 10: Missing end time
    */
   @Test
-  public void whenMissingEndTimePrintErrMessage(){
+  public void whenMissingEndTimePrintErrMessage() {
     MainMethodResult result = invokeMain(Project2.class, "Test10", "No End time", "03/03/2019", "12:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing argument"));
     assertThat(result.getExitCode(), equalTo(1));
