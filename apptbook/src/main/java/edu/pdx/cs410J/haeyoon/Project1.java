@@ -6,7 +6,8 @@ package edu.pdx.cs410J.haeyoon;
 //import java.util.Date;
 
 /**
- * The main class for the CS410J appointment book Project
+ * The class is for project 2 that creates appointment
+ * and add appointment to the appointment (commandline)
  */
 public class Project1 {
 
