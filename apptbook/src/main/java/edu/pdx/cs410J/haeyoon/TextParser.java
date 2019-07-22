@@ -6,7 +6,7 @@ import edu.pdx.cs410J.ParserException;
 import java.io.*;
 import java.util.StringTokenizer;
 
-import static edu.pdx.cs410J.haeyoon.Project2.usage;
+import static edu.pdx.cs410J.haeyoon.Project3.usage;
 
 /**
  * This class creates a <code> AppointmentBook</code> from the contents of an
@@ -49,18 +49,18 @@ public class TextParser implements AppointmentBookParser{
                 }
 
                 st = new StringTokenizer(line);
-                Project2 proj2 = new Project2();
-                proj2.setOwner(st.nextToken(","));
+                Project3 proj = new Project3();
+                proj.setOwner(st.nextToken(","));
 
                 if (this.book.getOwnerName() == null) {
                     //System.out.println("book owner name is: " + proj2.getOwner());
-                    this.book = new AppointmentBook(proj2.getOwner());
+                    this.book = new AppointmentBook(proj.getOwner());
 
                 } else {
-                    if (this.book.getOwnerName().equals(proj2.getOwner())) {
+                    if (this.book.getOwnerName().equals(proj.getOwner())) {
                     } else {
                         System.err.println("This book belongs to: " + this.book.getOwnerName());
-                        System.err.println("Appointment to be added is for " + proj2.getOwner());
+                        System.err.println("Appointment to be added is for " + proj.getOwner());
                         System.exit(1);
                     }
                 }
@@ -68,20 +68,26 @@ public class TextParser implements AppointmentBookParser{
 
                 for (int i = 0; st.hasMoreTokens(); i++) {
 
-                    if (proj2.getDescription() == null) {
-                        proj2.setDescription(st.nextToken(","));
+                    if (proj.getDescription() == null) {
+                        proj.setDescription(st.nextToken(",").trim());
 
-                    } else if (proj2.getBeginDate() == null) {
-                        proj2.setBeginDate(st.nextToken(","));
+                    } else if (proj.getBeginDate() == null) {
+                        proj.setBeginDate(st.nextToken(",").trim());
 
-                    } else if (proj2.getBeginTime() == null) {
-                        proj2.setBeginTime(st.nextToken(","));
+                    } else if (proj.getBeginTime() == null) {
+                        proj.setBeginTime(st.nextToken(",").trim());
 
-                    } else if (proj2.getEndDate() == null) {
-                        proj2.setEndDate(st.nextToken(","));
+                    } else if (proj.getBeginMeridiem() == null) {
+                        proj.setBeginMeridiem(st.nextToken(",").trim());
 
-                    } else if (proj2.getEndTime() == null) {
-                        proj2.setEndTime(st.nextToken(","));
+                    } else if (proj.getEndDate() == null) {
+                        proj.setEndDate(st.nextToken(",").trim());
+
+                    } else if (proj.getEndTime() == null) {
+                        proj.setEndTime(st.nextToken(",").trim());
+
+                    } else if (proj.getEndMeridiem() == null) {
+                        proj.setEndMeridiem(st.nextToken(",").trim());
 
                     } else {
                         usage("Spurious command line: " + st.nextToken(","));
@@ -89,19 +95,23 @@ public class TextParser implements AppointmentBookParser{
                 }
 
                 try {
-                    proj2.validate();
+                    proj.validate();
                 } catch (IllegalStateException ex) {
-                    usage(ex.getMessage());
+                    System.err.println("** Malformatted text file: " + this.fip);
+                    System.exit(1);
                 }
 
                 try {
-                    proj2.validateDateAndTime(proj2.getBeginDate(), proj2.getBeginTime());
-                    proj2.validateDateAndTime(proj2.getEndDate(), proj2.getEndTime());
+                    //System.out.println("----- Parsing text file -----");
+                    proj.validateDateAndTime(proj.getBeginDate(), proj.getBeginTime(), proj.getBeginMeridiem());
+                    proj.validateDateAndTime(proj.getEndDate(), proj.getEndTime(), proj.getEndMeridiem());
                 } catch (IllegalStateException ex) {
-                    usage(ex.getMessage());
+                    System.err.println("** Malformatted text file in date and time fields: " + this.fip);
+                    System.exit(1);
                 }
 
-                Appointment appointment = new Appointment(proj2.getDescription(), proj2.getBeginDate(), proj2.getBeginTime(), proj2.getEndDate(), proj2.getEndTime());
+                Appointment appointment = new Appointment(proj.getDescription(), proj.getBeginDate(), proj.getBeginTime(), proj.getBeginMeridiem(),
+                        proj.getEndDate(), proj.getEndTime(), proj.getEndMeridiem());
                 //System.out.println(appointment);
 
                 this.book.addAppointment(appointment);

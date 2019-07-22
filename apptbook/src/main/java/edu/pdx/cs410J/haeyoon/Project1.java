@@ -126,7 +126,7 @@ public class Project1 {
 
 
     /* create Appointment and Appointment Book with validated parameters */
-    Appointment newAppointment = new Appointment(description, beginDate, beginTime, endDate, endTime);
+    Appointment newAppointment = new Appointment(description, beginDate, beginTime, "xx", endDate, endTime, "xx");
     //System.out.println(newAppointment);
 
 

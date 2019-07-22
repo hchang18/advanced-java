@@ -56,11 +56,13 @@ public class Project3 {
      * The time when appointment begins (24-hour time)
      */
     private String beginTime = null;
+    private String beginMeridiem = null;
 
     /**
      * The time when appointment ends (24-hour time)
      */
     private String endTime = null;
+    private String endMeridiem = null;
 
     /**
      * Should the program print out README?
@@ -101,6 +103,7 @@ public class Project3 {
      * Appointment belong to project class
      */
     private AppointmentBook book = null;
+
 
     /////////////// Constructors //////////
 
@@ -185,13 +188,13 @@ public class Project3 {
     public void setBeginTime(String beginTimeString) {
         this.beginTime = beginTimeString;
     }
+    public void setBeginMeridiem(String beginMeridiemString) { this.beginMeridiem = beginMeridiemString; }
 
     /**
      * Sets the time when appointment ends (24-hour time)
      */
-    public void setEndTime(String endTimeString){
-        this.endTime = endTimeString;
-    }
+    public void setEndTime(String endTimeString){ this.endTime = endTimeString; }
+    public void setEndMeridiem(String endMeridiemString) { this.endMeridiem = endMeridiemString; }
 
 
     /**
@@ -241,6 +244,10 @@ public class Project3 {
         return this.beginTime;
     }
 
+    public String getBeginMeridiem() {
+        return this.beginMeridiem;
+    }
+
     /**
      * Get the time when appointment ends
      */
@@ -248,6 +255,9 @@ public class Project3 {
         return this.endTime;
     }
 
+    public String getEndMeridiem() {
+        return this.endMeridiem;
+    }
 
     /**
      * Validate the arguments passed into the project
@@ -279,6 +289,14 @@ public class Project3 {
         if (endTime == null || endTime.trim().equals("")){
             throw new IllegalStateException("Missing argument(s)");
         }
+
+        if (beginMeridiem == null || beginMeridiem.trim().equals("")) {
+            throw new IllegalStateException("Missing argument(s)");
+        }
+
+        if (endMeridiem == null || endMeridiem.trim().equals("")) {
+            throw new IllegalStateException("Missing argument(s)");
+        }
     }
 
     /**
@@ -286,10 +304,10 @@ public class Project3 {
      * @param Date
      * @param Time
      */
-    public void validateDateAndTime(String Date, String Time) {
+    public void validateDateAndTime(String Date, String Time, String Meridiem) {
 
-        String pattern = "MM/dd/yyyy HH:mm";
-        String TimeString = Date + " " + Time;
+        String pattern = "MM/dd/yyyy hh:mm a";
+        String TimeString = Date + " " + Time  + " " + Meridiem;
 
         SimpleDateFormat formatter = new SimpleDateFormat(pattern);
         formatter.setLenient(false);
@@ -305,7 +323,6 @@ public class Project3 {
     }
 
 
-
     /////////////// Main Program //////////
 
     /**
@@ -314,7 +331,7 @@ public class Project3 {
 
     public static void usage(String s){
         System.err.println("\n** " + s + "\n");
-        System.err.println("usage: java edu.pdx.cs410J.<login-id>.Project2 [options] <args>");
+        System.err.println("usage: java edu.pdx.cs410J.<login-id>.Project3 [options] <args>");
         System.err.println("  args are (in this order):");
         System.err.println("    owner                  The person who owns the appt book");
         System.err.println("    description            A description of the appointment");
@@ -434,11 +451,17 @@ public class Project3 {
             } else if (project3.beginTime == null){
                 project3.setBeginTime(args[i]);
 
+            } else if (project3.beginMeridiem == null){
+                project3.setBeginMeridiem(args[i]);
+
             } else if (project3.endDate == null){
                 project3.setEndDate(args[i]);
 
             } else if (project3.endTime == null){
                 project3.setEndTime(args[i]);
+
+            } else if (project3.endMeridiem == null) {
+                project3.setEndMeridiem(args[i]);
 
             } else {
                 usage("Extraneous command line argument(s): " + args[i]);
@@ -461,8 +484,8 @@ public class Project3 {
 
         // Check if the date and time are in good format
         try {
-            project3.validateDateAndTime(project3.getBeginDate(), project3.getBeginTime());
-            project3.validateDateAndTime(project3.getEndDate(), project3.getEndTime());
+            project3.validateDateAndTime(project3.getBeginDate(), project3.getBeginTime(), project3.getBeginMeridiem());
+            project3.validateDateAndTime(project3.getEndDate(), project3.getEndTime(), project3.getEndMeridiem());
 
         } catch(IllegalStateException ex){
             usage(ex.getMessage());
@@ -473,7 +496,8 @@ public class Project3 {
          * Create Appointment and Appointment Book with validated parameters
          * from command line arguments.
          */
-        Appointment CLAppointment = new Appointment(project3.description, project3.beginDate, project3.beginTime, project3.endDate, project3.endTime);
+        Appointment CLAppointment = new Appointment(project3.description, project3.beginDate, project3.beginTime, project3.beginMeridiem,
+                project3.endDate, project3.endTime, project3.endMeridiem);
 
         if(project3.printFlag){
             System.out.println(CLAppointment);
@@ -553,6 +577,8 @@ public class Project3 {
         */
 
     }
+
+
 
 }
 

@@ -426,7 +426,7 @@ public class Project2 {
          * Create Appointment and Appointment Book with validated parameters
          * from command line arguments.
          */
-        Appointment CLAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, project2.endDate, project2.endTime);
+        Appointment CLAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, "xx", project2.endDate, project2.endTime, "xx");
 
         if(project2.printFlag){
             System.out.println(CLAppointment);

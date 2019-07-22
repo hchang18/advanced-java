@@ -1,8 +1,11 @@
 package edu.pdx.cs410J.haeyoon;
 
+
 import edu.pdx.cs410J.AppointmentBookDumper;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -46,15 +49,15 @@ public class TextDumper implements AppointmentBookDumper<AppointmentBook>{
 
                 writer.write(appointment.getDescription().trim() + ", ");
 
-                //String beginTimeString = appointment.getBeginTimeString().trim();
-                //beginTimeString = beginTimeString.replace(" ", ", ");
-                writer.write(appointment.getBeginTimeString().trim());
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy, hh:mm, a");
+                String beginTimeString = df.format(appointment.getBeginTime());
+                writer.write(beginTimeString);
 
                 writer.write(", ");
 
-                //String endTimeString = appointment.getEndTimeString().trim();
-                //endTimeString = endTimeString.replace(" ", ", ");
-                writer.write(appointment.getEndTimeString().trim());
+                DateFormat df1 = new SimpleDateFormat("MM/dd/yyyy, hh:mm, a");
+                String endTimeString = df.format(appointment.getEndTime());
+                writer.write(endTimeString);
 
                 writer.write("\n");
           }
