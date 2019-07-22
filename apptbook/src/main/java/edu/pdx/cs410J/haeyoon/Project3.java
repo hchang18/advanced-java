@@ -14,13 +14,9 @@ import java.util.Date;
 
 
 /**
- * This is for project 3 that creates appointment and add the
- * appointment to the appointment book. There are two ways that
- * user can add appointment. First, the user can specifies owner,
- * description, begin time, and end time in the command line to
- * create new appointment. Second, the user can enter text file name,
- * and the program will parse the text file and insert appointment(s)
- * to the appointment book accordingly.
+ * This is for project 3 that has all the functionality
+ * of the previous project plus the ability to pretty print
+ * an appointment book.
  *
  * Style of the code below follows Submit.java example by Prof. David Whitlock
  *
@@ -28,7 +24,7 @@ import java.util.Date;
  * @since July 2019
  */
 
-public class Project2 {
+public class Project3 {
 
     //private static final PrintWriter out = new PrintWriter(System.out, true);
     //private static final PrintWriter err = new PrintWriter(System.err, true);
@@ -82,6 +78,11 @@ public class Project2 {
     private boolean textFileFlag = false;
 
     /**
+     * Should the program print the appointment book?
+     */
+    private boolean prettyFlag = false;
+
+    /**
      * The name of the text file to parse
      */
     private String textFileName = null;
@@ -90,6 +91,11 @@ public class Project2 {
      * The name of the text file in file format
      */
     private File file = null;
+
+    /**
+     * The name of the text file to pretty print the appointment book
+     */
+    private String prettyFile = null;
 
     /**
      * Appointment belong to project class
@@ -101,7 +107,7 @@ public class Project2 {
     /**
      * Create a new <code>Project 2</code> program
      */
-    public Project2(){
+    public Project3(){
 
     }
 
@@ -120,6 +126,16 @@ public class Project2 {
     private void setPrint(boolean print) {
         this.printFlag = print;
     }
+
+    /**
+     * Set whether or not the program pretty print out the appointment book
+     */
+    private void setPrettyFlag(boolean pretty) { this.prettyFlag = pretty; }
+
+    /**
+     * Set the name of the text file to print pretty the appointment book
+     */
+    private void setPrettyFile(String pf) {this.prettyFile = pf; }
 
     /**
      * Set whether or not the program should read/write to file
@@ -176,6 +192,12 @@ public class Project2 {
     public void setEndTime(String endTimeString){
         this.endTime = endTimeString;
     }
+
+
+    /**
+     * Get the name of the text file to print pretty the appointment book
+     */
+    public String getPrettyFileName() {return this.prettyFile; }
 
     /**
      * Get the name of the textfile to read/write the appointment book
@@ -296,16 +318,17 @@ public class Project2 {
         System.err.println("  args are (in this order):");
         System.err.println("    owner                  The person who owns the appt book");
         System.err.println("    description            A description of the appointment");
-        System.err.println("    beginTime              When the appt begins (24-hour time)");
-        System.err.println("    endTime                When the appt ends (24-hour time)");
+        System.err.println("    beginTime              When the appt begins");
+        System.err.println("    endTime                When the appt ends");
         System.err.println("  options are (options may appear in any order):");
+        System.err.println("    -pretty file           Pretty print the appointment book to");
+        System.err.println("                           a text file or standard out (file -) ");
         System.err.println("    -textFile file         Where to read/write the appointment book");
         System.err.println("    -print                 Prints a description of the new appointment");
         System.err.println("    -README                Prints a README for this project and exits");
         System.err.println("");
-        System.err.println("Dates and times should be in the format: mm/dd/yyyy hh:mm");
-        System.err.println("Elements in each line of the text file should be in the following format: ");
-        System.err.println("  owner, description, begin date (mm/dd/yyyy), begin time (hh:mm), end date (mm/dd/yyyy), end time (hh:mm)");
+        System.err.println("Dates and times should be in the format: mm/dd/yyyy hh:mm a*");
+        System.err.println("*a is meridiem am/pm");
         System.exit(1);
     }
 
@@ -314,6 +337,8 @@ public class Project2 {
         System.out.println("create a new appointment as specified on the command line, ");
         System.out.println("add the appointment to the appointment book");
         System.out.println("and then optionally writes the appointment book back to the text file.");
+        System.out.println("In addition to all the functionality, the program now has ability to ");
+        System.out.println("pretty print an appointment book. ");
         System.exit(0);
     }
 
@@ -323,7 +348,9 @@ public class Project2 {
      * add the Appointment to the AppointmentBook,
      * and then optionally writes the AppointmentBook back to the text file.
      */
-    public static void main(String[] args){ Project2 project2 = new Project2();
+    public static void main(String[] args){
+
+        Project3 project3 = new Project3();
 
         // Check if any arguments are passed in
         if(args.length == 0){
@@ -335,8 +362,28 @@ public class Project2 {
         for (int i = 0; i < args.length; i++) {
 
             // Check for options first
-            if (args[i].equals("-textFile")) {
-                project2.setTextFileFlag(true);
+            if (args[i].equals("-pretty")) {
+                project3.setPrettyFlag(true);
+
+                if(++i >= args.length) {
+                    usage("No text file to print pretty");
+                }
+
+                // check if the file name ends with .txt
+                if (args[i].endsWith(".txt")) {
+                    project3.setPrettyFile(args[i]);
+
+                } else if (args[i].trim().equals("-")) {
+                    project3.setPrettyFile(args[i]);
+
+                } else {
+                    System.err.println("This is not valid file option: " + args[i]);
+                    System.err.println("Enter file name to pretty-print to or \"-\" for standard out");
+                    System.exit(1);
+                }
+
+            } else if (args[i].equals("-textFile")) {
+                project3.setTextFileFlag(true);
 
                 if (++i >= args.length) {
                     usage("No text file specified");
@@ -344,7 +391,7 @@ public class Project2 {
 
                 // check if the file name ends with .txt
                 if (args[i].endsWith(".txt")) {
-                    project2.setTextfile(args[i]);
+                    project3.setTextfile(args[i]);
 
                 } else {
                     System.err.println("This is not a text file: " + args[i]);
@@ -354,10 +401,10 @@ public class Project2 {
                 // check if the file exists in the directory
                 try {
 
-                    File file = new File(project2.getTextFileName());
+                    File file = new File(project3.getTextFileName());
 
                     if (!file.exists()) {
-                        System.out.println("** Text file " + project2.getTextFileName() + " does not exist");
+                        System.out.println("** Text file " + project3.getTextFileName() + " does not exist");
                     }
 
                 } catch (NullPointerException ex) {
@@ -366,46 +413,46 @@ public class Project2 {
 
 
             } else if (args[i].equals("-print")) {
-                project2.setPrint(true);
+                project3.setPrint(true);
 
             } else if (args[i].equals("-README")) {
-                project2.setReadme(true);
+                project3.setReadme(true);
                 break;
 
             } else if (args[i].startsWith("-")){
                 usage("Unknown command line option");
 
-            } else if (project2.owner == null){
-                project2.setOwner(args[i]);
+            } else if (project3.owner == null){
+                project3.setOwner(args[i]);
 
-            } else if (project2.description == null){
-                project2.setDescription(args[i]);
+            } else if (project3.description == null){
+                project3.setDescription(args[i]);
 
-            } else if (project2.beginDate == null){
-                project2.setBeginDate(args[i]);
+            } else if (project3.beginDate == null){
+                project3.setBeginDate(args[i]);
 
-            } else if (project2.beginTime == null){
-                project2.setBeginTime(args[i]);
+            } else if (project3.beginTime == null){
+                project3.setBeginTime(args[i]);
 
-            } else if (project2.endDate == null){
-                project2.setEndDate(args[i]);
+            } else if (project3.endDate == null){
+                project3.setEndDate(args[i]);
 
-            } else if (project2.endTime == null){
-                project2.setEndTime(args[i]);
+            } else if (project3.endTime == null){
+                project3.setEndTime(args[i]);
 
             } else {
                 usage("Extraneous command line argument(s): " + args[i]);
             }
         }
 
-        if (project2.readme == true){
+        if (project3.readme == true){
             README();
             System.exit(0);
         }
 
         // Make sure that user entered enough information
         try{
-            project2.validate();
+            project3.validate();
 
         } catch(IllegalStateException ex){
             usage(ex.getMessage());
@@ -414,8 +461,8 @@ public class Project2 {
 
         // Check if the date and time are in good format
         try {
-            project2.validateDateAndTime(project2.getBeginDate(), project2.getBeginTime());
-            project2.validateDateAndTime(project2.getEndDate(), project2.getEndTime());
+            project3.validateDateAndTime(project3.getBeginDate(), project3.getBeginTime());
+            project3.validateDateAndTime(project3.getEndDate(), project3.getEndTime());
 
         } catch(IllegalStateException ex){
             usage(ex.getMessage());
@@ -426,9 +473,9 @@ public class Project2 {
          * Create Appointment and Appointment Book with validated parameters
          * from command line arguments.
          */
-        Appointment CLAppointment = new Appointment(project2.description, project2.beginDate, project2.beginTime, project2.endDate, project2.endTime);
+        Appointment CLAppointment = new Appointment(project3.description, project3.beginDate, project3.beginTime, project3.endDate, project3.endTime);
 
-        if(project2.printFlag){
+        if(project3.printFlag){
             System.out.println(CLAppointment);
         }
 
@@ -439,13 +486,13 @@ public class Project2 {
         * and dump it into the text file
         */
 
-        if(project2.textFileFlag == true) {
+        if(project3.textFileFlag == true) {
 
-            project2.file = new File(project2.textFileName);
+            project3.file = new File(project3.textFileName);
 
             try {
-                TextParser parser = new TextParser(project2.file);
-                project2.book = parser.parse();
+                TextParser parser = new TextParser(project3.file);
+                project3.book = parser.parse();
 
             } catch (FileNotFoundException ex){
                 System.err.println("** Could not find file: " + ex.getMessage());
@@ -456,7 +503,7 @@ public class Project2 {
                 System.exit(1);
 
             } catch (ParserException ex){
-                System.err.println("** Exception while parsing " + project2.textFileName + ": " + ex);
+                System.err.println("** Exception while parsing " + project3.textFileName + ": " + ex);
                 System.exit(1);
 
             }
@@ -464,26 +511,26 @@ public class Project2 {
             // check the owner name from command line and the owner name from
             // appointment book generated by the text file are the same
             // if so, add command line appointment into the book.
-            if(project2.book.getOwnerName() == null) {
-                project2.book = new AppointmentBook(project2.owner);
-                project2.book.addAppointment(CLAppointment);
+            if(project3.book.getOwnerName() == null) {
+                project3.book = new AppointmentBook(project3.owner);
+                project3.book.addAppointment(CLAppointment);
 
             } else {
 
-                if (project2.book.getOwnerName().equals(project2.owner)) {
-                    project2.book.addAppointment(CLAppointment);
+                if (project3.book.getOwnerName().equals(project3.owner)) {
+                    project3.book.addAppointment(CLAppointment);
 
                 } else {
-                    System.err.println("The owner name given on the commandline: " + project2.owner);
-                    System.err.println("and the owner name found on the text file: " + project2.book.getOwnerName());
+                    System.err.println("The owner name given on the commandline: " + project3.owner);
+                    System.err.println("and the owner name found on the text file: " + project3.book.getOwnerName());
                 }
             }
             /*
              * Dump an appointment book into text file
              */
             try {
-                TextDumper dumper = new TextDumper(project2.textFileName);
-                dumper.dump(project2.book);
+                TextDumper dumper = new TextDumper(project3.textFileName);
+                dumper.dump(project3.book);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -491,8 +538,8 @@ public class Project2 {
 
         } else {
 
-            project2.book = new AppointmentBook(project2.owner);
-            project2.book.addAppointment(CLAppointment);
+            project3.book = new AppointmentBook(project3.owner);
+            project3.book.addAppointment(CLAppointment);
 
         }
 
