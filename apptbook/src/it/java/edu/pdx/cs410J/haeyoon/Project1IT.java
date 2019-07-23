@@ -8,15 +8,15 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Integration tests for the {@link Project1} main class.
+ * Integration tests for the {@link Project3} main class.
  */
 public class Project1IT extends InvokeMainTestCase {
 
   /**
-   * Invoke the main method of {@link Project2} with the given arguments.
+   * Invoke the main method of {@link Project3} with the given arguments.
    */
   private MainMethodResult invokeMain(String... args) {
-    return invokeMain(Project2.class, args);
+    return invokeMain(Project3.class, args);
   }
 
   /**
@@ -34,7 +34,7 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenREADMEIsFlaggedPrintProjectDescAndExit() {
-    MainMethodResult result = invokeMain(Project2.class, "-README");
+    MainMethodResult result = invokeMain(Project3.class, "-README");
     assertThat(result.getTextWrittenToStandardOut(), containsString("This Program optionally"));
     assertThat(result.getExitCode(), equalTo(0));
   }
@@ -44,7 +44,7 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenArgsMissingDescriptionPrintMissingArgumentsToStandardError(){
-    MainMethodResult result = invokeMain(Project2.class, "Test3", "03/03/2019", "12:00", "03/03/2019", "16:00");
+    MainMethodResult result = invokeMain(Project3.class, "Test3", "03/03/2019", "12:00", "03/03/2019", "16:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing argument(s)"));
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -54,7 +54,7 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenBeginTimeIsMalformattedPrintErrorMessage(){
-    MainMethodResult result = invokeMain(Project2.class, "Test4", "This is Test 4", "03/03/2019", "12:XX", "03/03/2019", "16:00");
+    MainMethodResult result = invokeMain(Project3.class, "Test4", "This is Test 4", "03/03/2019", "12:XX", "03/03/2019", "16:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("Malformatted date and time"));
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -65,7 +65,7 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenEndTimeIsMalformattedPrintErrorMessage(){
-    MainMethodResult result = invokeMain(Project2.class, "Test5", "This is Test 5", "03/03/2019", "12:00", "03/03/20/9", "16:00");
+    MainMethodResult result = invokeMain(Project3.class, "Test5", "This is Test 5", "03/03/2019", "12:00", "03/03/20/9", "16:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("Malformatted date and time"));
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -76,7 +76,7 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenUnknownCommandLineOptionIsGivenPrintErrorMessage(){
-    MainMethodResult result = invokeMain(Project2.class, "-fred", "Test6", "This is Test 6", "03/03/2019", "12:00", "04/04/2019", "16:00");
+    MainMethodResult result = invokeMain(Project3.class, "-fred", "Test6", "This is Test 6", "03/03/2019", "12:00", "04/04/2019", "16:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("Unknown command line option"));
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -86,7 +86,7 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenUnknownCommandLineArgumentIsPassedPrintErrorMessage(){
-    MainMethodResult result = invokeMain(Project2.class, "Test7", "This is Test 6", "03/03/2019", "12:00", "04/04/2019", "16:00", "fred");
+    MainMethodResult result = invokeMain(Project3.class, "Test7", "This is Test 6", "03/03/2019", "12:00", "04/04/2019", "16:00", "fred");
     assertThat(result.getTextWrittenToStandardError(), containsString("Extraneous command line argument"));
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -96,7 +96,7 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenPrintOutOptionIsInvokedPrintOutAppointment(){
-    MainMethodResult result = invokeMain(Project2.class, "-print", "Test8", "This is Test8", "03/03/2019", "12:00", "04/04/2019", "16:00");
+    MainMethodResult result = invokeMain(Project3.class, "-print", "Test8", "This is Test8", "03/03/2019", "12:00", "04/04/2019", "16:00");
     assertThat(result.getTextWrittenToStandardOut(), containsString("This is Test8 from 03/03/2019, 12:00 until 04/04/2019, 16:00"));
   }
 
@@ -105,7 +105,7 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenOwnerNameIsMultiWordsPrintOutAllOfThem(){
-    MainMethodResult result = invokeMain(Project2.class,  "-print", "Test 9", "This is Test 9", "03/03/2019", "12:00", "09/04/2019", "16:00");
+    MainMethodResult result = invokeMain(Project3.class,  "-print", "Test 9", "This is Test 9", "03/03/2019", "12:00", "09/04/2019", "16:00");
     assertThat(result.getTextWrittenToStandardOut(), containsString("This is Test 9 from 03/03/2019, 12:00 until 09/04/2019, 16:00"));
   }
 
@@ -115,9 +115,18 @@ public class Project1IT extends InvokeMainTestCase {
    */
   @Test
   public void whenMissingEndTimePrintErrMessage() {
-    MainMethodResult result = invokeMain(Project2.class, "Test10", "No End time", "03/03/2019", "12:00");
+    MainMethodResult result = invokeMain(Project3.class, "Test10", "No End time", "03/03/2019", "12:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing argument"));
     assertThat(result.getExitCode(), equalTo(1));
+  }
+
+
+  @Test
+  public void beginTimeShouldBeBeforeEndTimeOrPrintErrorMessage(){
+    MainMethodResult result = invokeMain(Project3.class, "Kipper", "visit Arnold", "12/1/2018", "2:00", "pm", "12/1/2018", "1:00", "pm");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Appointment's end time is before its start time:"));
+    assertThat(result.getExitCode(), equalTo(1));
+
   }
 
 }

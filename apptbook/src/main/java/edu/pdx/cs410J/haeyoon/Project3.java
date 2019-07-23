@@ -28,6 +28,7 @@ public class Project3 {
 
     //private static final PrintWriter out = new PrintWriter(System.out, true);
     //private static final PrintWriter err = new PrintWriter(System.err, true);
+    //having static fields above prevented me from my IT to run all together
 
 
     /////////////// Instance Fields //////////
@@ -564,6 +565,27 @@ public class Project3 {
 
             project3.book = new AppointmentBook(project3.owner);
             project3.book.addAppointment(CLAppointment);
+
+        }
+
+
+
+
+        // CHECK IF USER TRIES TO PRETTY PRINT IN THE TEXT DUMPER FILE - THEY BETTER NOT BE THE SAME
+        // ALSO THINK ABOUT THE SEQUENCE OF -PRETTY AND -TEXTFILE
+
+        if (project3.prettyFlag == true) {
+
+            /*
+             * Dump an appointment book into text file in "pretty format"
+             */
+
+            try {
+                PrettyPrinter prettyPrint = new PrettyPrinter (project3.prettyFile);
+                prettyPrint.dump(project3.book);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
 

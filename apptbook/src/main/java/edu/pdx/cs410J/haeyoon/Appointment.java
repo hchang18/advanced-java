@@ -1,7 +1,6 @@
 package edu.pdx.cs410J.haeyoon;
 
 import edu.pdx.cs410J.AbstractAppointment;
-import edu.pdx.cs410J.ParserException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,7 +11,7 @@ import java.util.Date;
  * Appointment class for the CS410J appointment book Project
  */
 
-public class Appointment extends AbstractAppointment {
+public class Appointment extends AbstractAppointment implements Comparable<Appointment>{
 
   private String description;
   private String beginDate;
@@ -24,13 +23,21 @@ public class Appointment extends AbstractAppointment {
 
   public Appointment(String description, String beginDate, String beginTime, String beginMeridiem, String endDate, String endTime, String endMeridiem){
 
-    this.description = description;
-    this.beginDate = beginDate;
-    this.beginTime = beginTime;
-    this.beginMeridiem = beginMeridiem;
-    this.endDate = endDate;
-    this.endTime = endTime;
-    this.endMeridiem = endMeridiem;
+      this.description = description;
+      this.beginDate = beginDate;
+      this.beginTime = beginTime;
+      this.beginMeridiem = beginMeridiem;
+      this.endDate = endDate;
+      this.endTime = endTime;
+      this.endMeridiem = endMeridiem;
+
+      // if getEndTime() is sooner than getStartTime() print err message
+      if(this.getEndTime().before(this.getBeginTime())) {
+          System.err.println("** Appointment's end time is before its start time: " +
+                  this.getBeginTimeString() + " " + this.getEndTimeString());
+          System.exit(1);
+      }
+
 
   }
 
@@ -104,8 +111,34 @@ public class Appointment extends AbstractAppointment {
    * <code> "Kipper's birthday party"</code>
    */
   public String getDescription() {
-    return this.description;
+      return this.description;
   }
 
 
+  @Override
+  /**
+   * CompareTo() method that sort chronologically by appointments' beginning time,
+   * if two appointments begin at the same time, sort by ending time,
+   * if two appointments end at the same time, sort by description.
+   */
+  public int compareTo(Appointment appointment) {
+
+      int compareBeginTime = this.getBeginTime().compareTo(appointment.getBeginTime());
+      if (compareBeginTime == 0) {
+
+          int compareEndTime = this.getEndTime().compareTo(appointment.getEndTime());
+          if(compareEndTime == 0) {
+
+              int compareDesc = this.getDescription().compareTo(appointment.getDescription());
+              return compareDesc;
+
+          } else {
+              return compareEndTime;
+          }
+
+      } else {
+          return compareBeginTime;
+      }
+
+  }
 }

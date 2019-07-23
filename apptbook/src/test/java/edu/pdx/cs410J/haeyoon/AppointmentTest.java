@@ -53,4 +53,5 @@ public class AppointmentTest {
     assertThat(appointment.getBeginTimeString(), equalTo("12/11/18, 11:01 AM"));
   }
 
+
 }
