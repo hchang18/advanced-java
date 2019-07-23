@@ -56,10 +56,11 @@ public class TextDumper implements AppointmentBookDumper<AppointmentBook>{
                 writer.write(", ");
 
                 DateFormat df1 = new SimpleDateFormat("MM/dd/yyyy, hh:mm, a");
-                String endTimeString = df.format(appointment.getEndTime());
+                String endTimeString = df1.format(appointment.getEndTime());
                 writer.write(endTimeString);
 
                 writer.write("\n");
+
           }
 
             // All done
