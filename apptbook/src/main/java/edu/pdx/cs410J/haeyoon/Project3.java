@@ -383,7 +383,7 @@ public class Project3 {
                 project3.setPrettyFlag(true);
 
                 if(++i >= args.length) {
-                    usage("No text file to print pretty");
+                    usage("No such target file exists to print pretty: " + args[i]);
                 }
 
                 // check if the file name ends with .txt
@@ -421,7 +421,7 @@ public class Project3 {
                     File file = new File(project3.getTextFileName());
 
                     if (!file.exists()) {
-                        System.out.println("** Text file " + project3.getTextFileName() + " does not exist");
+                        //System.out.println("** Text file " + project3.getTextFileName() + " does not exist");
                     }
 
                 } catch (NullPointerException ex) {
@@ -546,7 +546,7 @@ public class Project3 {
 
                 } else {
                     System.err.println("The owner name given on the commandline: " + project3.owner);
-                    System.err.println("and the owner name found on the text file: " + project3.book.getOwnerName());
+                    System.err.println("The owner name found on the text file: " + project3.book.getOwnerName());
                 }
             }
             /*

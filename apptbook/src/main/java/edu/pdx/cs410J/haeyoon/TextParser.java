@@ -97,6 +97,8 @@ public class TextParser implements AppointmentBookParser{
                 try {
                     proj.validate();
                 } catch (IllegalStateException ex) {
+                    //System.err.println(ex.getMessage());
+                    // Activate this line if want to print out msg from validate()
                     System.err.println("** Malformatted text file: " + this.fip);
                     System.exit(1);
                 }
