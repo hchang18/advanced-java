@@ -98,13 +98,12 @@ public class TextParser implements AppointmentBookParser{
                     proj.validate();
                 } catch (IllegalStateException ex) {
                     //System.err.println(ex.getMessage());
-                    // Activate this line if want to print out msg from validate()
+                    //Activate this line above if want to print out msg from validate()
                     System.err.println("** Malformatted text file: " + this.fip);
                     System.exit(1);
                 }
 
                 try {
-                    //System.out.println("----- Parsing text file -----");
                     proj.validateDateAndTime(proj.getBeginDate(), proj.getBeginTime(), proj.getBeginMeridiem());
                     proj.validateDateAndTime(proj.getEndDate(), proj.getEndTime(), proj.getEndMeridiem());
                 } catch (IllegalStateException ex) {

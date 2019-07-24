@@ -175,7 +175,13 @@ public class Project1IT extends InvokeMainTestCase {
   /**
    * Test 11: File with an invalid year
    */
-
+  @Test
+  public void FileWithInvalidYearPrintErrorMessage(){
+    MainMethodResult result = invokeMain(Project3.class, "-textFile", "haeyoon-bad-year.txt", "Project2", "This is Test 10",
+            "01/11/2019", "11:00", "am", "01/11/2019", "11:39", "am");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Malformatted date and time"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
 
 
   /**
@@ -186,7 +192,41 @@ public class Project1IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain(Project3.class, "Kipper", "visit Arnold", "12/1/2018", "2:00", "pm", "12/1/2018", "1:00", "pm");
     assertThat(result.getTextWrittenToStandardError(), containsString("Appointment's end time is before its start time:"));
     assertThat(result.getExitCode(), equalTo(1));
+  }
 
+  /**
+   * Text xxx: Wrong meridiem prints out error message
+   */
+  @Test
+  public void WrongMeridiemPrintsOutErrorMessage() {
+    MainMethodResult result = invokeMain(Project3.class, "Kipper", "visit Arnold", "12/1/2018", "2:00", "xx", "12/1/2018", "1:00", "pm");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Malformatted date and time"));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  /**
+   * Test xxx: PrettyPrinter prints out appointment in order
+   */
+  @Test
+  public void PrettyPrinterPrintsOutAppointmentsInOrder() {
+    MainMethodResult result1 = invokeMain(Project3.class, "-textFile", "test.txt", "Kipper", "Kelly's birthday party - 2018",
+            "12/1/2018", "4:00", "pm", "12/1/2018", "8:00", "pm");
+    MainMethodResult result2 = invokeMain(Project3.class, "-textFile", "test.txt", "Kipper", "2017 Kelly's birthday party",
+            "12/1/2017", "4:00", "pm", "12/1/2017", "8:00", "pm");
+    MainMethodResult result3 = invokeMain(Project3.class, "-textFile", "test.txt", "Kipper", "Feed ducky",
+            "12/1/2018", "4:00", "pm", "12/1/2018", "8:00", "pm");
+    MainMethodResult result4 = invokeMain(Project3.class, "-textFile", "test.txt", "Kipper", "Playdate with Arnold",
+            "3/1/2018", "4:00", "pm", "3/2/2018", "8:00", "pm");
+    MainMethodResult result5 = invokeMain(Project3.class, "-textFile", "test.txt", "Kipper", "Go to the potty",
+            "3/1/2018", "10:00", "am", "4/1/2018", "8:00", "pm");
+    MainMethodResult result6 = invokeMain(Project3.class, "-textFile", "test.txt", "Kipper", "Library new book coming",
+            "12/1/2018", "4:00", "pm", "12/1/2018", "6:00", "pm");
+    MainMethodResult result7 = invokeMain(Project3.class, "-textFile", "test.txt", "-pretty", "pretty.txt", "Kipper", "Almost there?!",
+            "12/1/2019", "4:00", "am", "12/1/2019", "4:30", "pm");
+    MainMethodResult result8 = invokeMain(Project3.class, "-textFile", "test.txt", "-pretty", "-", "Kipper", "I am done testing!",
+            "12/1/2019", "3:00", "am", "12/1/2019", "2:30", "pm");
+
+    assertThat(result8.getTextWrittenToStandardOut(), containsString("I am done testing!"));
   }
 
 }
