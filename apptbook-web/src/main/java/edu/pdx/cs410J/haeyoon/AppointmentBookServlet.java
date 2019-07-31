@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.haeyoon;
 
 import com.google.common.annotations.VisibleForTesting;
+import edu.pdx.cs410J.ParserException;
 import org.apache.tools.ant.taskdefs.condition.Http;
 
 import javax.servlet.ServletException;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 //import java.util.ArrayList;
@@ -28,7 +30,6 @@ public class AppointmentBookServlet extends HttpServlet {
     static final String DESCRIPTION_PARAMETER = "description";
     static final String BEGIN_TIME_PARAMETER = "beginTime";
     static final String END_TIME_PARAMETER = "endTime";
-    static final boolean SEARCH_FLAG = false;
 
     private final Map<String, AppointmentBook> appointmentBooks = new HashMap<>();
 
@@ -45,21 +46,37 @@ public class AppointmentBookServlet extends HttpServlet {
         //response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
         String owner = getParameter(OWNER_PARAMETER, request);
+        String beginTime = getParameter(BEGIN_TIME_PARAMETER, request);
+        String endTime = getParameter(END_TIME_PARAMETER, request);
+
         if (owner != null) {
-            writeAppointments(owner, response);
+            if (beginTime == null && endTime == null) {
+                // print out all appointments in the appointment book
+                writeAppointments(owner, response);
+
+            } else if (beginTime != null && endTime != null) {
+                // IMPLEMENT SEARCH FUNCTION
+                findAppointments(owner, beginTime, endTime, response);
+
+            } else if (beginTime == null && endTime != null){
+                missingRequiredParameter(response, BEGIN_TIME_PARAMETER);
+
+            } else {
+                missingRequiredParameter(response, END_TIME_PARAMETER);
+            }
 
         } else {
             // RETURN ALL THE APPOINTMENTS OF ALL OWNERS
             writeAllAppointments(response);
         }
 
-        // IMPLEMENT SEARCH FUNCTION
         // CHECK ALL THE FUNCTIONS ACT AS IT IS
         // HTTP ERROR MESSAGE CLEAN UP
 
         response.setStatus(HttpServletResponse.SC_OK);
 
     }
+
 
     /**
      * Handles an HTTP POST request by storing the appointment entry for the
@@ -72,19 +89,59 @@ public class AppointmentBookServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/plain");
 
-        String parameter = OWNER_PARAMETER;
-        String owner = getRequiredParameter(request, response, parameter);
-        if (owner == null) return;
+        // validate that there is no missing element
+
+        String owner = getRequiredParameter(request, response, OWNER_PARAMETER);
+        if (owner == null){
+            missingRequiredParameter(response, OWNER_PARAMETER);
+        }
 
         String description = getRequiredParameter(request, response, DESCRIPTION_PARAMETER);
-        if (description == null) return;
+        if (description == null){
+            missingRequiredParameter(response, DESCRIPTION_PARAMETER);
+        }
 
         String beginTime = getRequiredParameter(request, response, BEGIN_TIME_PARAMETER);
-        if (beginTime == null) return;
+        if (beginTime == null) {
+            missingRequiredParameter(response, BEGIN_TIME_PARAMETER);
+        }
 
         String endTime = getRequiredParameter(request, response, END_TIME_PARAMETER);
-        if (endTime == null) return;
+        if (endTime == null) {
+            missingRequiredParameter (response, END_TIME_PARAMETER);
+        }
 
+        // VALIDATE BEGIN AND END TIME IS IN CORRECT FORMAT
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+        formatter.setLenient(false);
+        PrintWriter pw = response.getWriter();
+
+        Date beginTimeDate = null;
+        Date endTimeDate = null;
+
+        try {
+             beginTimeDate = formatter.parse(beginTime);
+        } catch (ParseException e) {
+            String message = "** Bad date and time format: " + beginTime;
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, message);
+        }
+
+        try {
+            endTimeDate = formatter.parse(endTime);
+        } catch (ParseException e) {
+            String message = "** Bad date and time format: " + endTime;
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, message);
+        }
+
+        // VALIDATE START TIME IS BEFORE END TIME
+        if (endTimeDate.before(beginTimeDate)) {
+            String message = "** Appointment's end time is before its start time: " +
+                    beginTimeDate + " " + endTimeDate;
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, message);
+        }
+
+
+        // CREATE AN APPOINTMENT
 
         if (this.appointmentBooks.containsKey(owner)) {
             // for returning owner
@@ -109,6 +166,7 @@ public class AppointmentBookServlet extends HttpServlet {
     }
 
 
+
     /**
      * Handles an HTTP DELETE request by removing all appointment books' entries.  This
      * behavior is exposed for testing purposes only.  It's probably not
@@ -122,7 +180,7 @@ public class AppointmentBookServlet extends HttpServlet {
         this.appointmentBooks.clear();
 
         PrintWriter pw = response.getWriter();
-        pw.println(Messages.allDictionaryEntriesDeleted());
+        pw.println("All appointment books deleted.");
         pw.flush();
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -169,7 +227,6 @@ public class AppointmentBookServlet extends HttpServlet {
         }
     }
 
-
     @VisibleForTesting
     public AppointmentBook getAppointmentBook(String owner) {
         return this.appointmentBooks.get(owner);
@@ -183,8 +240,119 @@ public class AppointmentBookServlet extends HttpServlet {
      * {@link Messages#formatDictionaryEntry(String, String)}
      */
 
-    private void writeAppointments(String owner, HttpServletResponse response) throws IOException {
-        prettyPrinter(response, owner);
+    private void findAppointments(String owner, String beginTime, String endTime,
+                                    HttpServletResponse response) throws IOException {
+
+
+        PrintWriter pw = response.getWriter();
+
+        // DOES THIS OWNER HAVE APPOINTMENT BOOK?
+        if (this.appointmentBooks.containsKey(owner)){
+
+            // Convert Search String to Date object
+            String pattern = "MM/dd/yyyy hh:mm a";
+            DateFormat df = new SimpleDateFormat(pattern);
+            df.setLenient(false);
+
+            Date searchBeginTime = null;
+            Date searchEndTime = null;
+
+            try {
+                searchBeginTime = df.parse(beginTime);
+
+            } catch (ParseException ex) {
+                String s = "** Bad date and time format: " + beginTime;
+                response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, s);
+            }
+
+            try {
+                searchEndTime = df.parse(endTime);
+            } catch (ParseException ex) {
+                String s = "** Bad date and time format: " + endTime;
+                response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, s);
+            }
+
+            // Check if search begin time is later than end time
+            if(searchEndTime.before(searchBeginTime)) {
+                String s = "** Appointment's end time is before its start time: "
+                + searchBeginTime + " " + searchEndTime;
+                response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, s);
+            }
+
+            // ITERATE OVER ALL APPOINTMENT BELONG TO THE OWNER AND
+            // PRINT OUT ONLY ONES THAT FALLS WITHIN THE SEARCH TIME FRAME
+
+            AppointmentBook book = getAppointmentBook(owner);
+
+            pw.println("Owner: " + book.getOwnerName());
+
+            ArrayList<Appointment> apptList = new ArrayList<>(book.getAppointments());
+            for (Appointment appointment : apptList) {
+
+                if(searchBeginTime.after(appointment.getBeginTime())
+                        || searchEndTime.before(appointment.getEndTime())){
+
+                } else {
+
+                    pw.print(appointment.getDescription().trim() + " ");
+
+                    pw.print("from ");
+
+                    String beginTimeString = df.format(appointment.getBeginTime());
+                    pw.print(beginTimeString);
+
+                    pw.print(" until ");
+
+                    String endTimeString = df.format(appointment.getEndTime());
+                    pw.print(endTimeString);
+
+                    pw.print(" for ");
+
+                    long diffInMillies = Math.abs(appointment.getEndTime().getTime() - appointment.getBeginTime().getTime());
+                    long duration = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                    pw.print(duration);
+
+                    pw.print(" minutes");
+
+                    pw.print("\n");
+
+                }
+
+            }
+
+            pw.flush();
+
+            response.setStatus(HttpServletResponse.SC_OK);
+
+
+
+        } else {
+            pw.println("Owner has no appointment book: " + owner);
+
+        }
+
+
+
+    }
+
+
+    /**
+     * Writes the definition of the given word to the HTTP response.
+     * <p>
+     * The text of the message is formatted with
+     * {@link Messages#formatDictionaryEntry(String, String)}
+     */
+
+    private void writeAppointments(String owner, HttpServletResponse response)
+            throws IOException {
+
+        if (this.appointmentBooks.containsKey(owner)) {
+            prettyPrinter(response, owner);
+
+        } else {
+            PrintWriter pw = response.getWriter();
+            pw.println("Owner has no appointment book: " + owner);
+        }
 
     }
 
@@ -194,7 +362,8 @@ public class AppointmentBookServlet extends HttpServlet {
      * The text of the message is formatted with
      * {@link Messages#formatDictionaryEntry(String, String)}
      */
-    private void writeAllAppointments(HttpServletResponse response) throws IOException {
+    private void writeAllAppointments(HttpServletResponse response)
+            throws IOException {
 
         List owners = new ArrayList(this.appointmentBooks.keySet());
         Iterator iterOwner = owners.iterator();
@@ -206,13 +375,13 @@ public class AppointmentBookServlet extends HttpServlet {
         }
     }
 
-    private void prettyPrinter(HttpServletResponse response, String owner) throws IOException {
+    private void prettyPrinter(HttpServletResponse response, String owner)
+            throws IOException {
 
         AppointmentBook book = getAppointmentBook(owner);
 
         PrintWriter pw = response.getWriter();
         pw.println("Owner: " + book.getOwnerName());
-        pw.println("");
 
         ArrayList<Appointment> apptList = new ArrayList<>(book.getAppointments());
         for (Appointment appointment : apptList) {
@@ -241,6 +410,8 @@ public class AppointmentBookServlet extends HttpServlet {
             pw.print("\n");
 
         }
+
+        pw.println("");
 
         pw.flush();
 

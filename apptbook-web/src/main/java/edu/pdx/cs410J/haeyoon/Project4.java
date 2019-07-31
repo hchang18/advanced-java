@@ -105,43 +105,43 @@ public class Project4 {
                 if (++i >= args.length) {
                     System.err.println("Missing arguments to use in search");
                 } else {
-                    if (searchOwner != null) searchOwner = args[i];
+                    if (searchOwner == null) searchOwner = args[i];
                 }
 
                 if (++i >= args.length) {
                     System.err.println("Missing arguments to use in search");
                 } else {
-                    if (searchBeginDate != null) searchBeginDate = args[i];
+                    if (searchBeginDate == null) searchBeginDate = args[i];
                 }
 
                 if (++i >= args.length) {
                     System.err.println("Missing arguments to use in search");
                 } else {
-                    if (searchBeginTime != null) searchBeginTime = args[i];
+                    if (searchBeginTime == null) searchBeginTime = args[i];
                 }
 
                 if (++i >= args.length) {
                     System.err.println("Missing arguments to use in search");
                 } else {
-                    if (searchBeginMeridiem != null) searchBeginMeridiem = args[i];
+                    if (searchBeginMeridiem == null) searchBeginMeridiem = args[i];
                 }
 
                 if (++i >= args.length) {
                     System.err.println("Missing arguments to use in search");
                 } else {
-                    if (searchEndDate != null) searchEndDate = args[i];
+                    if (searchEndDate == null) searchEndDate = args[i];
                 }
 
                 if (++i >= args.length) {
                     System.err.println("Missing arguments to use in search");
                 } else {
-                    if (searchEndTime != null) searchEndTime = args[i];
+                    if (searchEndTime == null) searchEndTime = args[i];
                 }
 
                 if (++i >= args.length) {
                     System.err.println("Missing arguments to use in search");
                 } else {
-                    if (searchEndMeridiem != null) searchEndMeridiem = args[i];
+                    if (searchEndMeridiem == null) searchEndMeridiem = args[i];
                 }
 
                 break;
@@ -220,12 +220,11 @@ public class Project4 {
                 // Scenario 2: pretty print all owners' appointments
 
             } else if (owner != null && description == null) {
-            // Scenario 3: pretty print all appointment in an appointment book
+                // Scenario 3: pretty print all appointment in an appointment book
 
             } else {
                 // Scenario 4: Add an appointment to the server
 
-                // Make sure that user entered enough information
                 try {
                     validate();
 
@@ -235,21 +234,15 @@ public class Project4 {
 
                 }
 
-                // Check if the date and time are in good format
                 try {
                     validateDateAndTime(beginDate, beginTime, beginMeridiem);
+                    validateDateAndTime(endDate, endTime, endMeridiem);
 
                 } catch (IllegalStateException ex) {
                     usage(ex.getMessage());
                     //System.exit(1);
                 }
 
-                try {
-                    validateDateAndTime(endDate, endTime, endMeridiem);
-                } catch (IllegalStateException ex) {
-                    usage(ex.getMessage());
-
-                }
             }
         }
 
@@ -264,38 +257,56 @@ public class Project4 {
         String beginTimeString = beginDate + " " + beginTime + " " + beginMeridiem;
         String endTimeString = endDate + " " + endTime + " " + endMeridiem;
 
-        String message;
+        String message = null;
 
-        try {
-            if (owner == null) {
-                // Print all owner - AppointmentBook pairs
+        if (searchFlag == true) {
 
-                //Map<String, String> dictionary = client.getAllDictionaryEntries();
-                //StringWriter sw = new StringWriter();
-                //Messages.formatDictionaryEntries(new PrintWriter(sw, true), dictionary);
-                //message = sw.toString();
+            try {
 
-                message = client.getAppointments();
+                String srchBeginTimeString = searchBeginDate + " " + searchBeginTime + " " + searchBeginMeridiem;
+                String srchEndTimeString = searchEndDate + " " + searchEndTime + " " + searchEndMeridiem;
 
-            } else if (description == null) {
-                // Print all appointment entries belong to the owner
-                message = client.getAppointments(owner);
-                //message = Messages.formatDictionaryEntry(owner, client.getAppointments(owner));
+                message = client.getAppointments(searchOwner, srchBeginTimeString, srchEndTimeString);
 
-            } else {
-                // Create new appointment
-                message = client.addAppointment(owner, description, beginTimeString, endTimeString);
+            } catch (IOException ex) {
+                error("While contacting server: " + ex);
+                return;
             }
 
-        } catch ( IOException ex ) {
-            error("While contacting server: " + ex);
-            return;
+            System.out.println(message);
+            System.exit(0);
+
+        } else {
+            try {
+                if (owner == null) {
+                    // Print all owner - AppointmentBook pairs
+
+                    //Map<String, String> dictionary = client.getAllDictionaryEntries();
+                    //StringWriter sw = new StringWriter();
+                    //Messages.formatDictionaryEntries(new PrintWriter(sw, true), dictionary);
+                    //message = sw.toString();
+
+                    message = client.getAllAppointmentEntries();
+
+                } else if (description == null) {
+                    // Print all appointment entries belong to the owner
+                    message = client.getAppointments(owner);
+                    //message = Messages.formatDictionaryEntry(owner, client.getAppointments(owner));
+
+                } else {
+                    // Create new appointment
+                    message = client.addAppointment(owner, description, beginTimeString, endTimeString);
+                }
+
+            } catch (IOException ex) {
+                error("While contacting server: " + ex);
+                return;
+            }
+
+            System.out.println(message);
+            System.exit(0);
+
         }
-
-        System.out.println(message);
-
-
-        System.exit(0);
 
 
     }

@@ -36,18 +36,9 @@ public class AppointmentBookRestClient extends HttpRequestHelper {
     return Messages.parseDictionary(response.getContent());
   }
 
-  /*
-  public Map<String, String> getAllAppointments() throws IOException {
-    Response response = get(this.url, Map.of());
-    return Messages.parseAppointmentBook(response.getContent());
-  }
-*/
-
   /**
-   * Return the appointments for owner
-   * @param owner
-   * @return
-   * @throws IOException
+   * Return the appointments that belong to specific owner
+   *
    */
   public String getAppointments(String owner) throws IOException {
     Response response = get(this.url, Map.of("owner", owner));
@@ -58,7 +49,25 @@ public class AppointmentBookRestClient extends HttpRequestHelper {
     return content;
   }
 
-  public String getAppointments() throws IOException {
+
+  public String getAppointments(String owner, String beginTime, String endTime)
+    throws IOException {
+    Map<String, String> params =
+            Map.of(
+                    "owner", owner,
+                    "beginTime", beginTime,
+                    "endTime", endTime
+            );
+    Response response = get(this.url, params);
+    throwExceptionIfNotOkayHttpStatus(response);
+    String content = response.getContent();
+    return content;
+  }
+
+  /**
+   * Return all the appointments that belong to all owner
+   */
+  public String getAllAppointmentEntries() throws IOException {
     Response response = get(this.url, Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
     String content = response.getContent();
