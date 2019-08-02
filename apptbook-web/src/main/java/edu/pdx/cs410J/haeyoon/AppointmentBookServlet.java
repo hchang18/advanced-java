@@ -1,7 +1,6 @@
 package edu.pdx.cs410J.haeyoon;
 
 import com.google.common.annotations.VisibleForTesting;
-import edu.pdx.cs410J.ParserException;
 import org.apache.tools.ant.taskdefs.condition.Http;
 
 import javax.servlet.ServletException;
@@ -14,16 +13,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.Map;
-//import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
  * This servlet ultimately provides a REST API for working with an
- * <code>AppointmentBook</code>.  However, in its current state, it is an example
- * of how to use HTTP and Java servlets to store simple word/definition pairs.
+ * <code>AppointmentBook</code>.
  */
 public class AppointmentBookServlet extends HttpServlet {
     static final String OWNER_PARAMETER = "owner";
@@ -36,26 +30,30 @@ public class AppointmentBookServlet extends HttpServlet {
     /**
      * Handles an HTTP GET request from a client by writing the appointments in the
      * AppointmentBook for "owner" HTTP parameter to the HTTP response.  If the
-     * "word" parameter is not specified, all of the entries in the dictionary
+     * "owner" parameter is not specified, all of the entries of all AppointmentBooks
      * are written to the HTTP response.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/plain");
-        //response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
         String owner = getParameter(OWNER_PARAMETER, request);
         String beginTime = getParameter(BEGIN_TIME_PARAMETER, request);
         String endTime = getParameter(END_TIME_PARAMETER, request);
 
-        if (owner != null) {
+        if (owner == null) {
+            // return all appointments of all owners
+            writeAllAppointments(response);
+
+        } else {
+
             if (beginTime == null && endTime == null) {
                 // print out all appointments in the appointment book
                 writeAppointments(owner, response);
 
             } else if (beginTime != null && endTime != null) {
-                // IMPLEMENT SEARCH FUNCTION
+                // search option invoked
                 findAppointments(owner, beginTime, endTime, response);
 
             } else if (beginTime == null && endTime != null){
@@ -63,18 +61,11 @@ public class AppointmentBookServlet extends HttpServlet {
 
             } else {
                 missingRequiredParameter(response, END_TIME_PARAMETER);
-            }
 
-        } else {
-            // RETURN ALL THE APPOINTMENTS OF ALL OWNERS
-            writeAllAppointments(response);
+            }
         }
 
-        // CHECK ALL THE FUNCTIONS ACT AS IT IS
-        // HTTP ERROR MESSAGE CLEAN UP
-
         response.setStatus(HttpServletResponse.SC_OK);
-
     }
 
 
@@ -114,7 +105,6 @@ public class AppointmentBookServlet extends HttpServlet {
         // VALIDATE BEGIN AND END TIME IS IN CORRECT FORMAT
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         formatter.setLenient(false);
-        PrintWriter pw = response.getWriter();
 
         Date beginTimeDate = null;
         Date endTimeDate = null;
@@ -158,8 +148,6 @@ public class AppointmentBookServlet extends HttpServlet {
             book.addAppointment(appointment);
 
         }
-
-        // response.getWriter().println(appointment.toString());
 
         response.setStatus(HttpServletResponse.SC_OK);
 
@@ -234,10 +222,8 @@ public class AppointmentBookServlet extends HttpServlet {
 
 
     /**
-     * Writes the definition of the given word to the HTTP response.
-     * <p>
-     * The text of the message is formatted with
-     * {@link Messages#formatDictionaryEntry(String, String)}
+     * Find the appointments that meet given criteria
+     * to the HTTP responses
      */
 
     private void findAppointments(String owner, String beginTime, String endTime,
@@ -245,6 +231,23 @@ public class AppointmentBookServlet extends HttpServlet {
 
 
         PrintWriter pw = response.getWriter();
+
+        // CHECK ALL THE INPUTS ARE VALID
+        if (owner == null) {
+            String s = "** Missing owner name.";
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, s);
+        }
+
+        if (beginTime == null) {
+            String s = "** Missing begin time.";
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, s);
+        }
+
+        if (endTime == null) {
+            String s = "** Missing end time";
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, s);
+        }
+
 
         // DOES THIS OWNER HAVE APPOINTMENT BOOK?
         if (this.appointmentBooks.containsKey(owner)){
@@ -274,7 +277,7 @@ public class AppointmentBookServlet extends HttpServlet {
 
             // Check if search begin time is later than end time
             if(searchEndTime.before(searchBeginTime)) {
-                String s = "** Appointment's end time is before its start time: "
+                String s = "** Search end time is before its start time: "
                 + searchBeginTime + " " + searchEndTime;
                 response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, s);
             }
@@ -286,6 +289,8 @@ public class AppointmentBookServlet extends HttpServlet {
 
             pw.println("Owner: " + book.getOwnerName());
 
+            int searchCount = 0;
+
             ArrayList<Appointment> apptList = new ArrayList<>(book.getAppointments());
             for (Appointment appointment : apptList) {
 
@@ -293,6 +298,8 @@ public class AppointmentBookServlet extends HttpServlet {
                         || searchEndTime.before(appointment.getEndTime())){
 
                 } else {
+
+                    searchCount++;
 
                     pw.print(appointment.getDescription().trim() + " ");
 
@@ -320,10 +327,13 @@ public class AppointmentBookServlet extends HttpServlet {
 
             }
 
+            if (searchCount == 0) {
+                pw.println("No appointment found between " + beginTime + " and " + endTime);
+            }
+
             pw.flush();
 
             response.setStatus(HttpServletResponse.SC_OK);
-
 
 
         } else {
@@ -331,16 +341,11 @@ public class AppointmentBookServlet extends HttpServlet {
 
         }
 
-
-
     }
 
 
     /**
-     * Writes the definition of the given word to the HTTP response.
-     * <p>
-     * The text of the message is formatted with
-     * {@link Messages#formatDictionaryEntry(String, String)}
+     * Writes the appointments of the given owner to the HTTP response.
      */
 
     private void writeAppointments(String owner, HttpServletResponse response)
@@ -357,13 +362,16 @@ public class AppointmentBookServlet extends HttpServlet {
     }
 
     /**
-     * Writes all of the dictionary entries to the HTTP response.
-     * <p>
-     * The text of the message is formatted with
-     * {@link Messages#formatDictionaryEntry(String, String)}
+     * Writes all of appointment entries to the HTTP response.
      */
     private void writeAllAppointments(HttpServletResponse response)
             throws IOException {
+
+        if (this.appointmentBooks.isEmpty()){
+            String s = "There is no appointment book. ";
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, s);
+
+        }
 
         List owners = new ArrayList(this.appointmentBooks.keySet());
         Iterator iterOwner = owners.iterator();

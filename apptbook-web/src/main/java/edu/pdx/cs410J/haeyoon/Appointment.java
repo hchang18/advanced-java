@@ -44,6 +44,7 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
                   this.getBeginTimeString() + " " + this.getEndTimeString());
           System.exit(1);
       }
+
   }
 
   public Appointment(String description, String beginTime, String endTime) {

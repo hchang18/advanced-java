@@ -4,7 +4,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * The main class that parses the command line and communicates with the
@@ -47,25 +46,19 @@ public class Project4 {
     private static boolean searchFlag = false;
 
 
-    private String prettyFile = null;
-
-    private AppointmentBook book = null;
-
-
     /////////////// Instance Methods //////////
 
 
     /**
-     * The main class that parses the command line and communicates with the
-     * Appointment Book server using REST. Project 4 has all the functionality
-     * of the previous projects.
+     * Project 4 main class that parses the command line and communicates with the
+     * Appointment Book server using REST.
      */
     public static void main(String... args) {
 
         // Check if any arguments are passed in
         if (args.length == 0) {
-            System.err.println("Missing command line arguments");
-            //System.exit(1);
+            error("Missing command line arguments");
+            System.exit(1);
         }
 
         // Parse the command line
@@ -83,13 +76,11 @@ public class Project4 {
                 if (++i >= args.length) {
                     usage("Missing port");
                 }
-
                 portString = args[i];
                 try {
                     port = Integer.parseInt(portString);
                 } catch (NumberFormatException ex) {
                     usage("Port \"" + portString + "\" must be an integer");
-                    return;
                 }
 
             } else if (args[i].equals("-print")) {
@@ -103,50 +94,48 @@ public class Project4 {
                 searchFlag = true;
 
                 if (++i >= args.length) {
-                    System.err.println("Missing arguments to use in search");
+                    error("Missing argument(s) for search");
                 } else {
                     if (searchOwner == null) searchOwner = args[i];
                 }
 
                 if (++i >= args.length) {
-                    System.err.println("Missing arguments to use in search");
+                    error("Missing argument(s) for search");
                 } else {
                     if (searchBeginDate == null) searchBeginDate = args[i];
                 }
 
                 if (++i >= args.length) {
-                    System.err.println("Missing arguments to use in search");
+                    error("Missing argument(s) for search");
                 } else {
                     if (searchBeginTime == null) searchBeginTime = args[i];
                 }
 
                 if (++i >= args.length) {
-                    System.err.println("Missing arguments to use in search");
+                    error("Missing argument(s) for search");
                 } else {
                     if (searchBeginMeridiem == null) searchBeginMeridiem = args[i];
                 }
 
                 if (++i >= args.length) {
-                    System.err.println("Missing arguments to use in search");
+                    error("Missing argument(s) for search");
                 } else {
                     if (searchEndDate == null) searchEndDate = args[i];
                 }
 
                 if (++i >= args.length) {
-                    System.err.println("Missing arguments to use in search");
+                    error("Missing argument(s) for search");
                 } else {
                     if (searchEndTime == null) searchEndTime = args[i];
                 }
 
                 if (++i >= args.length) {
-                    System.err.println("Missing arguments to use in search");
+                    error("Missing argument(s) for search");
                 } else {
                     if (searchEndMeridiem == null) searchEndMeridiem = args[i];
                 }
 
                 break;
-
-
 
             } else if (args[i].startsWith("-")) {
                 usage("Unknown command line option");
@@ -177,33 +166,37 @@ public class Project4 {
 
             } else {
                 usage("Extraneous command line argument(s): " + args[i]);
-
             }
-
         }
+
+
+        // README is flagged
 
         if (readme == true) {
             README();
-            //System.exit(0);
+            System.exit(0);
         }
 
 
+
         /*
-         * Depending on the scenario, required arguments vary. In each scenario,
-         * command line arguments validation should vary too.
+         * Depending on the scenario, required arguments vary.
+         * In each scenario, command line arguments validation
+         * should vary too.
          */
 
         if (searchFlag == true) {
+
             // Scenario 1: search option is on!
 
             try {
                 if (searchOwner == null || searchOwner.trim().equals("")) {
-                    throw new IllegalStateException("Missing argument(s): owner");
+                    throw new IllegalStateException("Missing argument(s) for search: owner");
                 }
 
             } catch (IllegalStateException ex) {
-                System.err.println(ex.getMessage());
-
+                error(ex.getMessage());
+                System.exit(1);
             }
 
             try {
@@ -211,13 +204,22 @@ public class Project4 {
                 validateDateAndTime(searchEndDate, searchEndTime, searchEndMeridiem);
 
             } catch (IllegalStateException ex) {
-                System.err.println(ex.getMessage());
+                error(ex.getMessage());
+                System.exit(1);
             }
 
         } else {
 
             if (owner == null) {
-                // Scenario 2: pretty print all owners' appointments
+
+                if (hostName != null && portString != null) {
+                    // Scenario 2: pretty print all owners' appointments
+
+                } else {
+                    error("No hostname nor port provided");
+                    System.exit(1);
+
+                }
 
             } else if (owner != null && description == null) {
                 // Scenario 3: pretty print all appointment in an appointment book
@@ -230,7 +232,7 @@ public class Project4 {
 
                 } catch (IllegalStateException ex) {
                     usage(ex.getMessage());
-                    //System.exit(1);
+                    System.exit(1);
 
                 }
 
@@ -240,7 +242,18 @@ public class Project4 {
 
                 } catch (IllegalStateException ex) {
                     usage(ex.getMessage());
-                    //System.exit(1);
+                    System.exit(1);
+                }
+
+                /*
+                 * -print is flagged
+                 */
+                Appointment CLAppointment =
+                        new Appointment(description, beginDate, beginTime, beginMeridiem,
+                                endDate, endTime, endMeridiem);
+
+                if(printFlag == true){
+                    System.out.println(CLAppointment);
                 }
 
             }
@@ -249,65 +262,60 @@ public class Project4 {
 
         /*
          * Working with REST API
-         *
          */
+        if (hostFlag == true && portFlag == true) {
+            AppointmentBookRestClient client = new AppointmentBookRestClient(hostName, port);
 
-        AppointmentBookRestClient client = new AppointmentBookRestClient(hostName, port);
+            String beginTimeString = beginDate + " " + beginTime + " " + beginMeridiem;
+            String endTimeString = endDate + " " + endTime + " " + endMeridiem;
 
-        String beginTimeString = beginDate + " " + beginTime + " " + beginMeridiem;
-        String endTimeString = endDate + " " + endTime + " " + endMeridiem;
+            String message;
 
-        String message = null;
+            if (searchFlag == true) {
 
-        if (searchFlag == true) {
+                try {
 
-            try {
+                    String srchBeginTimeString = searchBeginDate + " " + searchBeginTime + " " + searchBeginMeridiem;
+                    String srchEndTimeString = searchEndDate + " " + searchEndTime + " " + searchEndMeridiem;
 
-                String srchBeginTimeString = searchBeginDate + " " + searchBeginTime + " " + searchBeginMeridiem;
-                String srchEndTimeString = searchEndDate + " " + searchEndTime + " " + searchEndMeridiem;
+                    message = client.searchAppointments(searchOwner, srchBeginTimeString, srchEndTimeString);
 
-                message = client.getAppointments(searchOwner, srchBeginTimeString, srchEndTimeString);
-
-            } catch (IOException ex) {
-                error("While contacting server: " + ex);
-                return;
-            }
-
-            System.out.println(message);
-            System.exit(0);
-
-        } else {
-            try {
-                if (owner == null) {
-                    // Print all owner - AppointmentBook pairs
-
-                    //Map<String, String> dictionary = client.getAllDictionaryEntries();
-                    //StringWriter sw = new StringWriter();
-                    //Messages.formatDictionaryEntries(new PrintWriter(sw, true), dictionary);
-                    //message = sw.toString();
-
-                    message = client.getAllAppointmentEntries();
-
-                } else if (description == null) {
-                    // Print all appointment entries belong to the owner
-                    message = client.getAppointments(owner);
-                    //message = Messages.formatDictionaryEntry(owner, client.getAppointments(owner));
-
-                } else {
-                    // Create new appointment
-                    message = client.addAppointment(owner, description, beginTimeString, endTimeString);
+                } catch (IOException ex) {
+                    error("While contacting server: " + ex);
+                    return;
                 }
 
-            } catch (IOException ex) {
-                error("While contacting server: " + ex);
-                return;
+                System.out.println(message);
+                System.exit(0);
+
+            } else {
+
+                try {
+
+                    if (owner == null) {
+
+                        // print all appointments of all owners
+                        message = client.getAllAppointmentEntries();
+
+                    } else if (owner != null && description == null) {
+                        // Print all appointment entries belong to the owner
+                        message = client.getAppointments(owner);
+
+                    } else {
+                        // Create new appointment
+                        message = client.addAppointment(owner, description, beginTimeString, endTimeString);
+                    }
+
+                } catch (IOException ex) {
+                    error("While contacting server: " + ex);
+                    return;
+                }
+
+                System.out.println(message);
+                System.exit(0);
+
             }
-
-            System.out.println(message);
-            System.exit(0);
-
         }
-
 
     }
 
@@ -322,8 +330,8 @@ public class Project4 {
             Date DateTime = formatter.parse(TimeString);
 
         } catch (ParseException e) {
-            System.err.println("** Malformatted date and time: " + TimeString);
-            //System.exit(1);
+            error("Malformatted date and time: " + TimeString);
+            System.exit(1);
         }
     }
 
@@ -367,7 +375,7 @@ public class Project4 {
         PrintStream err = System.err;
         err.println("** " + message);
 
-        //System.exit(1);
+        System.exit(1);
     }
 
     /**
@@ -389,13 +397,13 @@ public class Project4 {
         System.err.println("    -print                 Prints a description of the new appointment");
         System.err.println("    -README                Prints a README for this project and exits");
         System.err.println("");
-        //System.exit(1);
+        System.exit(1);
     }
 
     private static void README(){
-        System.out.println("The main class that parses the command line and communicates with the");
-        System.out.println("Appointment Book server using REST. Project 4 has all the functionality");
-        System.out.println("of the previous projects.");
-        //System.exit(0);
+        System.out.println("The main class that parses the command line and ");
+        System.out.println("communicates with the Appointment Book server ");
+        System.out.println("using REST.");
+        System.exit(0);
     }
 }
