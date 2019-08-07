@@ -27,14 +27,6 @@ public class Project4 {
     private static String endTime = null;
     private static String endMeridiem = null;
 
-    private static String searchOwner = null;
-    private static String searchBeginDate = null;
-    private static String searchBeginTime = null;
-    private static String searchBeginMeridiem = null;
-    private static String searchEndDate = null;
-    private static String searchEndTime = null;
-    private static String searchEndMeridiem = null;
-
     private static String hostName = null;
     private static String portString = null;
     private static int port = -1;
@@ -57,7 +49,7 @@ public class Project4 {
 
         // Check if any arguments are passed in
         if (args.length == 0) {
-            error("Missing command line arguments");
+            usage("Missing command line arguments");
             System.exit(1);
         }
 
@@ -90,85 +82,77 @@ public class Project4 {
                 readme = true;
                 break;
 
-            } else if (args[i].equals("-search")){
+            } else if (args[i].equals("-search")) {
                 searchFlag = true;
-
-                if (++i >= args.length) {
-                    error("Missing argument(s) for search");
-                } else {
-                    if (searchOwner == null) searchOwner = args[i];
-                }
-
-                if (++i >= args.length) {
-                    error("Missing argument(s) for search");
-                } else {
-                    if (searchBeginDate == null) searchBeginDate = args[i];
-                }
-
-                if (++i >= args.length) {
-                    error("Missing argument(s) for search");
-                } else {
-                    if (searchBeginTime == null) searchBeginTime = args[i];
-                }
-
-                if (++i >= args.length) {
-                    error("Missing argument(s) for search");
-                } else {
-                    if (searchBeginMeridiem == null) searchBeginMeridiem = args[i];
-                }
-
-                if (++i >= args.length) {
-                    error("Missing argument(s) for search");
-                } else {
-                    if (searchEndDate == null) searchEndDate = args[i];
-                }
-
-                if (++i >= args.length) {
-                    error("Missing argument(s) for search");
-                } else {
-                    if (searchEndTime == null) searchEndTime = args[i];
-                }
-
-                if (++i >= args.length) {
-                    error("Missing argument(s) for search");
-                } else {
-                    if (searchEndMeridiem == null) searchEndMeridiem = args[i];
-                }
-
-                break;
 
             } else if (args[i].startsWith("-")) {
                 usage("Unknown command line option");
 
-            } else if (owner == null) {
-                owner = args[i];
-
-            } else if (description == null) {
-                description = args[i];
-
-            } else if (beginDate == null) {
-                beginDate = args[i];
-
-            } else if (beginTime == null) {
-                beginTime = args[i];
-
-            } else if (beginMeridiem == null) {
-                beginMeridiem = args[i];
-
-            } else if (endDate == null) {
-                endDate = args[i];
-
-            } else if (endTime == null) {
-                endTime = args[i];
-
-            } else if (endMeridiem == null) {
-                endMeridiem = args[i];
-
             } else {
-                usage("Extraneous command line argument(s): " + args[i]);
+
+                if (searchFlag == false) {
+
+                    if (owner == null) {
+                        owner = args[i];
+
+                    } else if (description == null) {
+                        description = args[i];
+
+                    } else if (beginDate == null) {
+                        beginDate = args[i];
+
+                    } else if (beginTime == null) {
+                        beginTime = args[i];
+
+                    } else if (beginMeridiem == null) {
+                        beginMeridiem = args[i];
+
+                    } else if (endDate == null) {
+                        endDate = args[i];
+
+                    } else if (endTime == null) {
+                        endTime = args[i];
+
+                    } else if (endMeridiem == null) {
+                        endMeridiem = args[i];
+
+                    } else {
+                        usage("Extraneous command line argument(s): " + args[i]);
+                    }
+
+                } else {
+
+                    if (owner == null) {
+                        owner = args[i];
+
+                        //} else if (description == null) {
+                        //    description = args[i];
+
+                    } else if (beginDate == null) {
+                        beginDate = args[i];
+
+                    } else if (beginTime == null) {
+                        beginTime = args[i];
+
+                    } else if (beginMeridiem == null) {
+                        beginMeridiem = args[i];
+
+                    } else if (endDate == null) {
+                        endDate = args[i];
+
+                    } else if (endTime == null) {
+                        endTime = args[i];
+
+                    } else if (endMeridiem == null) {
+                        endMeridiem = args[i];
+
+                    } else {
+                        usage("Extraneous command line argument(s): " + args[i]);
+                    }
+
+                }
             }
         }
-
 
         // README is flagged
 
@@ -176,8 +160,6 @@ public class Project4 {
             README();
             System.exit(0);
         }
-
-
 
         /*
          * Depending on the scenario, required arguments vary.
@@ -190,7 +172,7 @@ public class Project4 {
             // Scenario 1: search option is on!
 
             try {
-                if (searchOwner == null || searchOwner.trim().equals("")) {
+                if (owner == null || owner.trim().equals("")) {
                     throw new IllegalStateException("Missing argument(s) for search: owner");
                 }
 
@@ -200,8 +182,8 @@ public class Project4 {
             }
 
             try {
-                validateDateAndTime(searchBeginDate, searchBeginTime, searchBeginMeridiem);
-                validateDateAndTime(searchEndDate, searchEndTime, searchEndMeridiem);
+                validateDateAndTime(beginDate, beginTime, beginMeridiem);
+                validateDateAndTime(endDate, endTime, endMeridiem);
 
             } catch (IllegalStateException ex) {
                 error(ex.getMessage());
@@ -218,7 +200,6 @@ public class Project4 {
                 } else {
                     error("No hostname nor port provided");
                     System.exit(1);
-
                 }
 
             } else if (owner != null && description == null) {
@@ -233,7 +214,6 @@ public class Project4 {
                 } catch (IllegalStateException ex) {
                     usage(ex.getMessage());
                     System.exit(1);
-
                 }
 
                 try {
@@ -275,10 +255,10 @@ public class Project4 {
 
                 try {
 
-                    String srchBeginTimeString = searchBeginDate + " " + searchBeginTime + " " + searchBeginMeridiem;
-                    String srchEndTimeString = searchEndDate + " " + searchEndTime + " " + searchEndMeridiem;
+                    String srchBeginTimeString = beginDate + " " + beginTime + " " + beginMeridiem;
+                    String srchEndTimeString = endDate + " " + endTime + " " + endMeridiem;
 
-                    message = client.searchAppointments(searchOwner, srchBeginTimeString, srchEndTimeString);
+                    message = client.searchAppointments(owner, srchBeginTimeString, srchEndTimeString);
 
                 } catch (IOException ex) {
                     error("While contacting server: " + ex);
