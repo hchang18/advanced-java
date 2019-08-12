@@ -17,9 +17,6 @@ public class Readme extends Activity {
 
     public void onReturnHome(View view) {
 
-        Intent goingBack = new Intent();
-
-        setResult(RESULT_OK, goingBack);
         finish();
 
     }
