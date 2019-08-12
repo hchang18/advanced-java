@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Appointment Books"
+        android:textSize = "20sp"
+        android:textStyle="bold"
+        android:padding="20dp"
+         />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create appointment"
+        android:onClick="onCreateApptClick"
+        android:id="@+id/create_appointment_button"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search appointment"
+        android:onClick="onSearchApptClick"
+        android:id="@+id/search_appointment_button"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View appointment book"
+        android:onClick="onViewApptBookClick"
+        android:id="@+id/view_appointment_book_button"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="help"
+        android:onClick="onHelpClick"
+        android:id="@+id/help_button"/>
+
+
+</LinearLayout>
