@@ -31,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onCreateApptClick(View view) {
+
+        Intent getCreateApptScreenIntent = new Intent(this, CreateAppointment.class);
+
+        startActivity(getCreateApptScreenIntent);
+
     }
 
     public void onSearchApptClick(View view) {

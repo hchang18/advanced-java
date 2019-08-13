@@ -21,6 +21,11 @@
             android:label="Help"
             android:theme="@style/AppTheme"/>
 
+        <activity android:name=".CreateAppointment"
+            android:label="create-new-appointment"
+            android:theme="@style/AppTheme"
+            />
+
     </application>
 
 </manifest>

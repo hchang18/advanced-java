@@ -15,7 +15,7 @@ public class Readme extends Activity {
 
     }
 
-    public void onReturnHome(View view) {
+    public void onReturnHomeFromHelp(View view) {
 
         finish();
 
