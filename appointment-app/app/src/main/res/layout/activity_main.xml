@@ -31,7 +31,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="view appoingment book"
+        android:text="view appointment book"
         android:id="@+id/view_appt_book_button"
         android:onClick="ViewAppointmentBook"/>
 

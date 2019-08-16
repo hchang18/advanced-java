@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void ViewAppointmentBook(View view) {
 
-        Intent getViewAppotBookScreenIntent = new Intent(this, ViewAppointmentBook.class);
-        startActivity(getViewAppotBookScreenIntent);
+        Intent getViewApptBookScreenIntent = new Intent(this, ViewAppointmentBook.class);
+        startActivity(getViewApptBookScreenIntent);
     }
 }

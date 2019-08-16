@@ -128,7 +128,6 @@ public class CreateAppointment extends Activity {
 
         // instantiate necessary fields
 
-        String appointmentString = owner + ", " + newAppointment.toString();
         FileOutputStream fos = null;
         FileInputStream fis = null;
 
@@ -187,10 +186,10 @@ public class CreateAppointment extends Activity {
                             endDateString = st.nextToken(",").trim();
 
                         } else if (endTimeString == null) {
-                            endTimeString = st.nextToken(",");
+                            endTimeString = st.nextToken(",").trim();
 
                         } else if (endMerString == null) {
-                            endMerString = st.nextToken(",");
+                            endMerString = st.nextToken(",").trim();
 
                         } else {
                             System.err.println("Spurious command line: " + st.nextToken(","));
@@ -238,16 +237,16 @@ public class CreateAppointment extends Activity {
                 for (Appointment appointment: apptList) {
 
                     fos.write((book.getOwnerName().trim() + ", ").getBytes());
-                    fos.write((newAppointment.getDescription().trim()+", ").getBytes());
+                    fos.write((appointment.getDescription().trim()+", ").getBytes());
 
                     DateFormat df = new SimpleDateFormat("MM/dd/yyyy, hh:mm, a");
-                    String beginTimeString = df.format(newAppointment.getBeginTime());
+                    String beginTimeString = df.format(appointment.getBeginTime());
                     fos.write(beginTimeString.getBytes());
 
                     fos.write(", ".getBytes());
 
                     DateFormat df1 = new SimpleDateFormat("MM/dd/yyyy, hh:mm, a");
-                    String endTimeString = df1.format(newAppointment.getEndTime());
+                    String endTimeString = df1.format(appointment.getEndTime());
                     fos.write(endTimeString.getBytes());
 
                     fos.write("\n".getBytes());
