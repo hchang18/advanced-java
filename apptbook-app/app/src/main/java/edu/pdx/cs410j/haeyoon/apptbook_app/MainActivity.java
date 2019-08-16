@@ -15,10 +15,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button createAppt = (Button) findViewById(R.id.create_appointment_button);
-        Button searchAppt = (Button) findViewById(R.id.search_appointment_button);
-        Button viewApptBook = (Button) findViewById(R.id.view_appointment_book_button);
-        Button helpButton = (Button) findViewById(R.id.help_button);
+        Button createAppt = findViewById(R.id.create_appointment_button);
+        Button searchAppt = findViewById(R.id.search_appointment_button);
+        Button viewApptBook = findViewById(R.id.view_appointment_book_button);
+        Button helpButton = findViewById(R.id.help_button);
 
     }
 
@@ -39,8 +39,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSearchApptClick(View view) {
+
+
     }
 
     public void onViewApptBookClick(View view) {
+
+        Intent getViewApptBookScreenIntent = new Intent(this, ViewAppointments.class);
+
+        startActivity(getViewApptBookScreenIntent);
     }
 }

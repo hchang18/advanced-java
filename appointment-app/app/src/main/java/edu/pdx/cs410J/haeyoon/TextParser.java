@@ -1,4 +1,6 @@
-package edu.pdx.cs410j.haeyoon.apptbook_app;
+package edu.pdx.cs410J.haeyoon;
+
+import android.app.Activity;
 
 import edu.pdx.cs410J.ParserException;
 
@@ -11,7 +13,7 @@ import java.util.StringTokenizer;
  * text file.
  */
 
-public class TextParser {
+public class TextParser extends Activity {
 
     private AppointmentBook book;    // The appointment book we are creating
     private File fip;
@@ -49,12 +51,8 @@ public class TextParser {
 
                 String owner = st.nextToken(", ");
                 String description = null;
-                String beginDate = null;
                 String beginTime = null;
-                String beginMeridiem = null;
-                String endDate = null;
                 String endTime = null;
-                String endMeridiem = null;
 
 
                 for (int i = 0; st.hasMoreTokens(); i++) {
@@ -62,39 +60,27 @@ public class TextParser {
                     if (description == null) {
                         description = st.nextToken(",").trim();
 
-                    } else if (beginDate == null) {
-                        beginDate = st.nextToken(",").trim();
-
                     } else if (beginTime == null) {
-                        beginTime = st.nextToken(", ").trim();
-
-                    } else if (beginMeridiem == null) {
-                        beginMeridiem = st.nextToken(", ").trim();
-
-                    } else if (endDate == null) {
-                        endDate = st.nextToken(", ").trim();
+                        beginTime = st.nextToken(",").trim();
 
                     } else if (endTime == null) {
-                        endTime = st.nextToken(", ").trim();
+                        endTime = st.nextToken(",").trim();
 
-                    } else if (endMeridiem == null) {
-                        endMeridiem = st.nextToken(", ").trim();
                     }
 
                 }
 
-                Appointment appointment = new Appointment(description, beginDate, beginTime, beginMeridiem,
-                        endDate, endTime, endMeridiem);
+                Appointment appointment = new Appointment(description, beginTime, endTime);
 
                 this.book.addAppointment(appointment);
             }
 
 
         } catch (FileNotFoundException ex){
+            ex.printStackTrace();
 
         } catch (IOException ex){
             ex.printStackTrace();
-            System.exit(1);
         }
 
 
@@ -102,3 +88,4 @@ public class TextParser {
     }
 
 }
+

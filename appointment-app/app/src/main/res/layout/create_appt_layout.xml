@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Let's create appointment"
-        android:textSize="20sp" />
+        android:textSize="25sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -16,9 +16,9 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="20dp"
             android:text="Name: "/>
 
         <EditText
@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:text=""
             android:id="@+id/owner_edit_text"
+            android:textSize="20dp"
             android:hint="e.g. Pete the Cat"/>
 
     </LinearLayout>
@@ -37,7 +38,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:text="Description: "/>
@@ -57,7 +58,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:text="Begin Time: "/>
@@ -78,7 +79,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:text="End Time: "/>
@@ -92,12 +93,33 @@
 
     </LinearLayout>
 
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
-        android:onClick="onClickCreateApptButton"
-        />
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:onClick="onClickSaveButton"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Load"
+            android:onClick="onClickLoadButton"/>
+
+    </LinearLayout>
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/result_to_show_textview"/>
 
 
 </LinearLayout>

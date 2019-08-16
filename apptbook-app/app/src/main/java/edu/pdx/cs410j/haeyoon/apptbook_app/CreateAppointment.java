@@ -9,22 +9,15 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import edu.pdx.cs410J.AbstractAppointment;
+import edu.pdx.cs410J.ParserException;
 
 
 public class CreateAppointment extends Activity {
-
-    private static final String FILE_NAME = "save.txt";
-    private static Map<String, AppointmentBook> appointmentBooks =
-            new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,34 +45,49 @@ public class CreateAppointment extends Activity {
      */
     public void createAppointmentClick(View view) {
 
-        EditText ownerET = (EditText) findViewById(R.id.owner_name_edit_text);
-        String owner = String.valueOf(ownerET.getText());
-
-        EditText descET = (EditText) findViewById(R.id.description_edit_text);
-        String description = String.valueOf(descET.getText());
-
-        EditText beginDateET = (EditText) findViewById(R.id.begin_date_edit_text);
-        String beginDate = String.valueOf(beginDateET.getText());
-
-        EditText beginTimeET = (EditText) findViewById(R.id.begin_time_edit_text);
-        String beginTime = String.valueOf(beginTimeET.getText());
-
-        EditText beginMerET = (EditText) findViewById(R.id.begin_mer_edit_text);
-        String beginMeridiem = String.valueOf(beginMerET.getText());
+        String owner = null;
+        String description = null;
+        String beginDate = null;
+        String beginTime = null;
+        String beginMeridiem = null;
+        String endDate = null;
+        String endTime = null;
+        String endMeridiem = null;
 
 
-        EditText endDateET = (EditText) findViewById(R.id.end_date_edit_text);
-        String endDate = String.valueOf(endDateET.getText());
+        EditText ownerET = findViewById(R.id.owner_name_edit_text);
+        owner = String.valueOf(ownerET.getText());
 
-        EditText endTimeET = (EditText) findViewById(R.id.end_time_edit_text);
-        String endTime = String.valueOf(endTimeET.getText());
+        EditText descET = findViewById(R.id.description_edit_text);
+        description = String.valueOf(descET.getText());
 
-        EditText endMerET = (EditText) findViewById(R.id.end_mer_edit_text);
-        String endMeridiem = String.valueOf(endMerET.getText());
+        EditText beginDateET = findViewById(R.id.begin_date_edit_text);
+        beginDate = String.valueOf(beginDateET.getText());
+
+        EditText beginTimeET = findViewById(R.id.begin_time_edit_text);
+        beginTime = String.valueOf(beginTimeET.getText());
+
+        EditText beginMerET = findViewById(R.id.begin_mer_edit_text);
+        beginMeridiem = String.valueOf(beginMerET.getText());
+
+
+        EditText endDateET = findViewById(R.id.end_date_edit_text);
+        endDate = String.valueOf(endDateET.getText());
+
+        EditText endTimeET = findViewById(R.id.end_time_edit_text);
+        endTime = String.valueOf(endTimeET.getText());
+
+        EditText endMerET = findViewById(R.id.end_mer_edit_text);
+        endMeridiem = String.valueOf(endMerET.getText());
 
 
         //////////////////// Validate input ////////////////////////////
 
+        if (owner == "") {
+            Toast.makeText(this, "Provide name", Toast.LENGTH_LONG).show();
+        }
+
+        /*
         try {
             validate(owner, description, beginDate, beginTime, beginMeridiem,
                     endDate, endTime, endMeridiem);
@@ -95,35 +103,53 @@ public class CreateAppointment extends Activity {
         } catch (IllegalStateException ex) {
             Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
+        */
+        ////////////////// Check start time is before end time /////////////
+
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+        formatter.setLenient(false);
+
+        Date beginTimeDate = null;
+        Date endTimeDate = null;
+
 
         /////////////////// Read existing appointments and add new one //////////////////////
 
-        File fop = new File(FILE_NAME);
-
         try {
 
-            TextParser parser = new TextParser(fop);
-            appointmentBooks = parser.parse();
+            String fileName = owner + ".txt";
+            File file = new File(this.getFilesDir(), fileName);
 
-            if (appointmentBooks.containsKey(owner)) {
-            // when owner already has appointment book
+            Appointment newAppointment = new Appointment(description, beginDate, beginTime, beginMeridiem,
+                    endDate, endTime, endMeridiem);
 
-                AppointmentBook book = appointmentBooks.get(owner);
+            if (file.exists()) {
 
-                Appointment appointment = new Appointment(description, beginDate, beginTime,
-                        beginMeridiem, endDate, endTime, endMeridiem);
-                book.addAppointment(appointment);
+                // read in existing appointment from text file
+                TextParser textParser = new TextParser(file);
+                AppointmentBook book = textParser.parse();
+
+                // add new appointment to the appointment book
+                book.addAppointment(newAppointment);
+
+                // print existing + new appointments to ownerName.txt file
+                TextDumper textDumper = new TextDumper(fileName);
+                textDumper.dump(book);
+
 
             } else {
-            // when owner do not have appointment book
 
+                // add new appointment to the new appointment book
                 AppointmentBook book = new AppointmentBook(owner);
-                appointmentBooks.put(owner, book);
+                book.addAppointment(newAppointment);
 
-                Appointment appointment = new Appointment(description, beginDate, beginTime,
-                        beginMeridiem, endDate, endTime, endMeridiem);
-                book.addAppointment(appointment);
+                // print new appointment to ownerName.txt file
+                TextDumper textDumper = new TextDumper(fileName);
+                textDumper.dump(book);
+
             }
+
+            Toast.makeText(this, "Saved to" + getFilesDir() + "/", Toast.LENGTH_LONG).show();
 
             ownerET.getText().clear();
             descET.getText().clear();
@@ -140,27 +166,15 @@ public class CreateAppointment extends Activity {
         } catch (IOException ex) {
             ex.printStackTrace();
 
-        } catch (ParseException ex) {
+        } catch (ParserException ex) {
             ex.printStackTrace();
 
         }
 
-        /////////////////// Save all appointments in text file ///////////////////////
-
-        try{
-            TextDumper dumper = new TextDumper(FILE_NAME);
-            dumper.dump(appointmentBooks);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
 
     }
 
-    private void validateDateAndTime(String Date, String Time, String Meridiem) {
+    public void validateDateAndTime(String Date, String Time, String Meridiem) {
         String pattern = "MM/dd/yyyy hh:mm a";
         String TimeString = Date + " " + Time + " " + Meridiem;
 
@@ -176,7 +190,7 @@ public class CreateAppointment extends Activity {
         }
     }
 
-    private void validate(String owner, String description,
+    public void validate(String owner, String description,
                                  String beginDate, String beginTime, String beginMeridiem,
                                  String endDate, String endTime, String endMeridiem) {
 
