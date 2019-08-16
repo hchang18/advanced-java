@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 public class SearchAppointment extends Activity {
 
@@ -208,6 +209,9 @@ public class SearchAppointment extends Activity {
             String srchResultFileName = owner + "_search.txt";
             String srchFilePath = getApplication().getFilesDir().getPath() + "/" + srchResultFileName;
             File srchFile = new File(srchFilePath);
+
+            AppointmentBook srchResultBook = new AppointmentBook(owner);
+
             int searchCount = 0;
 
             try {
@@ -222,6 +226,8 @@ public class SearchAppointment extends Activity {
                             || endTimeDate.before(appointment.getEndTime())) {
 
                     } else {
+
+                        srchResultBook.addAppointment(appointment);
 
                         searchCount++;
                         // save appointment to text file (dumper)
@@ -263,32 +269,43 @@ public class SearchAppointment extends Activity {
 
             // load it (pretty-print)
 
-            try {
-                fis = openFileInput(srchResultFileName);
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader br = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
-                String text = "";
+            StringBuilder sb = new StringBuilder();
 
-                while ((text = br.readLine()) != null) {
-                    sb.append(text).append("\n");
-                }
+            String name = "Owner: " + srchResultBook.getOwnerName().trim() + "\n";
+            sb.append(name);
 
-                srchResult.setText(sb.toString());
+            ArrayList<Appointment> appointmentList
+                    = new ArrayList<>(srchResultBook.getAppointments());
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+            for (Appointment appointment: appointmentList) {
+
+                String desc = appointment.getDescription().trim() + " ";
+
+                sb.append(desc);
+
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+                String beginTimeString = df.format(appointment.getBeginTime());
+                sb.append("from " + beginTimeString);
+
+                System.out.print(" until ");
+
+                String endTimeString = df.format(appointment.getEndTime());
+                sb.append(" until " + endTimeString);
+
+                sb.append(" for ");
+
+                long diffInMillies = Math.abs(appointment.getEndTime().getTime() - appointment.getBeginTime().getTime());
+                long duration = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                sb.append(duration);
+
+                sb.append(" minutes");
+
+                sb.append("\n");
+
             }
+
+            srchResult.setText(sb.toString());
+
 
 
             if(searchCount == 0) {

@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 import edu.pdx.cs410J.ParserException;
 
@@ -271,33 +272,42 @@ public class CreateAppointment extends Activity {
 
             // load it (pretty-print)
 
-            try {
-                fis = openFileInput(fileName);
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader br = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
-                String text = "";
+            StringBuilder sb = new StringBuilder();
 
-                while ((text = br.readLine())!= null) {
-                    sb.append(text).append("\n");
-                }
+            String name = "Owner: " + book.getOwnerName().trim() + "\n";
+            sb.append(name);
 
-                prettyPrint.setText(sb.toString());
+            ArrayList<Appointment> appointmentList
+                    = new ArrayList<>(book.getAppointments());
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+            for (Appointment appointment: appointmentList) {
+
+                String desc = appointment.getDescription().trim() + " ";
+
+                sb.append(desc);
+
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+                String beginTimeString = df.format(appointment.getBeginTime());
+                sb.append("from " + beginTimeString);
+
+                System.out.print(" until ");
+
+                String endTimeString = df.format(appointment.getEndTime());
+                sb.append(" until " + endTimeString);
+
+                sb.append(" for ");
+
+                long diffInMillies = Math.abs(appointment.getEndTime().getTime() - appointment.getBeginTime().getTime());
+                long duration = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                sb.append(duration);
+
+                sb.append(" minutes");
+
+                sb.append("\n");
+
             }
 
+            prettyPrint.setText(sb.toString());
 
 
         } else {
@@ -339,33 +349,42 @@ public class CreateAppointment extends Activity {
 
             // load it (pretty-print)
 
-            try {
+            StringBuilder sb = new StringBuilder();
 
-                fis = openFileInput(fileName);
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader br = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
-                String text = "";
+            String name = "Owner: " + book.getOwnerName().trim() + "\n";
+            sb.append(name);
 
-                while ((text = br.readLine())!= null) {
-                    sb.append(text).append("\n");
-                }
+            ArrayList<Appointment> appointmentList
+                    = new ArrayList<>(book.getAppointments());
 
-                prettyPrint.setText(sb.toString());
+            for (Appointment appointment: appointmentList) {
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                String desc = appointment.getDescription().trim() + " ";
+
+                sb.append(desc);
+
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+                String beginTimeString = df.format(appointment.getBeginTime());
+                sb.append("from " + beginTimeString);
+
+                System.out.print(" until ");
+
+                String endTimeString = df.format(appointment.getEndTime());
+                sb.append(" until " + endTimeString);
+
+                sb.append(" for ");
+
+                long diffInMillies = Math.abs(appointment.getEndTime().getTime() - appointment.getBeginTime().getTime());
+                long duration = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                sb.append(duration);
+
+                sb.append(" minutes");
+
+                sb.append("\n");
+
             }
+
+            prettyPrint.setText(sb.toString());
 
         }
 
