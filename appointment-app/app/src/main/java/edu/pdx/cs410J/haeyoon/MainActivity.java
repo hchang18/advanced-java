@@ -20,4 +20,23 @@ public class MainActivity extends AppCompatActivity {
         startActivity(getCreateApptScreenIntent);
 
     }
+
+    public void GoToReadme(View view) {
+
+        Intent getHelpScreenIntent = new Intent(this, Help.class);
+        startActivity(getHelpScreenIntent);
+    }
+
+    public void SearchAppointment(View view) {
+
+        Intent getSearchApptScreenIntent = new Intent(this, SearchAppointment.class);
+        startActivity(getSearchApptScreenIntent);
+
+    }
+
+    public void ViewAppointmentBook(View view) {
+
+        Intent getViewAppotBookScreenIntent = new Intent(this, ViewAppointmentBook.class);
+        startActivity(getViewAppotBookScreenIntent);
+    }
 }

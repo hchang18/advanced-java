@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">appointment-app</string>
+    <string name="readme">In this appointment application, you can create appointment, search for appointment,
+        and view any appointment book. </string>
 </resources>

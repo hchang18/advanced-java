@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Welcome! "
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:textStyle="bold"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -19,5 +20,26 @@
         android:text="create appointment"
         android:id="@+id/create_appt_button"
         android:onClick="CreateNewAppointment"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="search appointments"
+        android:id="@+id/search_appt_button"
+        android:onClick="SearchAppointment"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="view appoingment book"
+        android:id="@+id/view_appt_book_button"
+        android:onClick="ViewAppointmentBook"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="help"
+        android:id="@+id/help_button"
+        android:onClick="GoToReadme"/>
 
 </LinearLayout>
