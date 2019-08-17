@@ -13,6 +13,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 public class ViewAppointmentBook extends Activity {
 
@@ -49,9 +54,129 @@ public class ViewAppointmentBook extends Activity {
         String filePath = getApplication().getFilesDir().getPath() + "/" + fileName;
         File file = new File(filePath);
 
+        AppointmentBook bookToView = new AppointmentBook(owner);
+
         if (file.exists()){
+
+            try {
+                fis = openFileInput(fileName);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader br = new BufferedReader(isr);
+                StringTokenizer st;
+
+                while(true) {
+
+                    String line = br.readLine();
+                    if (line == null) {
+                        break;
+                    }
+
+                    st = new StringTokenizer(line);
+
+                    String ownerString = st.nextToken(", ");
+                    String descString = null;
+                    String beginDateString = null;
+                    String beginTimeString = null;
+                    String beginMerString = null;
+                    String endDateString = null;
+                    String endTimeString = null;
+                    String endMerString = null;
+
+
+                    for (int i = 0; st.hasMoreTokens(); i++) {
+
+                        if (descString == null) {
+                            descString = st.nextToken(",").trim();
+
+                        } else if (beginDateString == null) {
+                            beginDateString = st.nextToken(",").trim();
+
+                        } else if (beginTimeString == null) {
+                            beginTimeString = st.nextToken(",").trim();
+
+                        } else if (beginMerString == null) {
+                            beginMerString = st.nextToken(",").trim();
+
+                        } else if (endDateString == null) {
+                            endDateString = st.nextToken(",").trim();
+
+                        } else if (endTimeString == null) {
+                            endTimeString = st.nextToken(",").trim();
+
+                        } else if (endMerString == null) {
+                            endMerString = st.nextToken(",").trim();
+
+                        } else {
+                            System.err.println("Spurious command line: " + st.nextToken(","));
+
+                        }
+
+                    }
+
+                    String fullBeginTimeString = beginDateString + " " + beginTimeString + " " +
+                            beginMerString;
+                    String fullEndTimeString = endDateString + " " + endTimeString + " " +
+                            endMerString;
+
+                    Appointment appointment = new Appointment(descString, fullBeginTimeString, fullEndTimeString);
+                    bookToView.addAppointment(appointment);
+
+                }
+
+                Toast.makeText(this, "load successful", Toast.LENGTH_LONG).show();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
             // load it (pretty-print)
 
+            StringBuilder sb = new StringBuilder();
+
+            String name = "Owner: " + bookToView.getOwnerName().trim() + "\n";
+            sb.append(name);
+
+            ArrayList<Appointment> appointmentList
+                    = new ArrayList<>(bookToView.getAppointments());
+
+            for (Appointment appointment: appointmentList) {
+
+                String desc = appointment.getDescription().trim() + " ";
+
+                sb.append(desc);
+
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+                String beginTimeString = df.format(appointment.getBeginTime());
+                sb.append("from " + beginTimeString);
+
+                String endTimeString = df.format(appointment.getEndTime());
+                sb.append(" until " + endTimeString);
+
+                sb.append(" for ");
+
+                long diffInMillies = Math.abs(appointment.getEndTime().getTime() - appointment.getBeginTime().getTime());
+                long duration = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                sb.append(duration);
+
+                sb.append(" minutes");
+
+                sb.append("\n");
+
+            }
+
+            viewResult.setText(sb.toString());
+
+            /*
             try {
                 fis = openFileInput(fileName);
                 InputStreamReader isr = new InputStreamReader(fis);
@@ -78,6 +203,8 @@ public class ViewAppointmentBook extends Activity {
                     }
                 }
             }
+            */
+
 
         } else {
             // no appointment exists for this owner

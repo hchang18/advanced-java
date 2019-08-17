@@ -290,8 +290,6 @@ public class CreateAppointment extends Activity {
                 String beginTimeString = df.format(appointment.getBeginTime());
                 sb.append("from " + beginTimeString);
 
-                System.out.print(" until ");
-
                 String endTimeString = df.format(appointment.getEndTime());
                 sb.append(" until " + endTimeString);
 
@@ -366,8 +364,6 @@ public class CreateAppointment extends Activity {
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
                 String beginTimeString = df.format(appointment.getBeginTime());
                 sb.append("from " + beginTimeString);
-
-                System.out.print(" until ");
 
                 String endTimeString = df.format(appointment.getEndTime());
                 sb.append(" until " + endTimeString);

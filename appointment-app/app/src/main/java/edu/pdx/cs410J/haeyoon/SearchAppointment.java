@@ -287,8 +287,6 @@ public class SearchAppointment extends Activity {
                 String beginTimeString = df.format(appointment.getBeginTime());
                 sb.append("from " + beginTimeString);
 
-                System.out.print(" until ");
-
                 String endTimeString = df.format(appointment.getEndTime());
                 sb.append(" until " + endTimeString);
 
