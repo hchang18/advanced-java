@@ -2,4 +2,10 @@
     <string name="app_name">appointment-app</string>
     <string name="readme">In this appointment application, you can create appointment, search for appointment,
         and view any appointment book. </string>
+    <string name="main_page_exp">In this application, you can create new appointment, search appointments, and view appointment book. </string>
+    <string name="create_app_exp">In this page, you can create new appointment. Enter name, description, begin time and end time of an appointment, then
+    click "create appointment" button. You can print out the latest added appointment by clicking "print it on screen" button</string>
+    <string name="srch_appt_exp">In this page, you can search appointment between begin and end time. Enter the name of appointment owner, begin time and end time.
+    If there exists appointment(s) that belong to the owner name and that happens between begin and end times, result will print out below. </string>
+    <string name="view_appt_book_exp">in this page, you can view all the appointments that belong to one person. Enter the name below.</string>
 </resources>

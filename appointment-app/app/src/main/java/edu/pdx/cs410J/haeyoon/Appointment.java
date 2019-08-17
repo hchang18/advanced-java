@@ -64,7 +64,6 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
         } catch (ParseException ex) {
             String s = "Bad date and time format: " + this.fullBeginTime;
             System.err.println("** " + s);
-            System.exit(1);
         }
 
         return begin;
@@ -83,7 +82,6 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
         } catch (ParseException ex) {
             String s = "Bad date and time format: " + this.fullEndTime;
             System.err.println("** " + s);
-            System.exit(1);
         }
 
         return end;

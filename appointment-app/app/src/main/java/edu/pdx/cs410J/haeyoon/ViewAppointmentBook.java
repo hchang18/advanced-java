@@ -58,6 +58,8 @@ public class ViewAppointmentBook extends Activity {
 
         if (file.exists()){
 
+            // text file parser
+
             try {
                 fis = openFileInput(fileName);
                 InputStreamReader isr = new InputStreamReader(fis);
@@ -73,7 +75,7 @@ public class ViewAppointmentBook extends Activity {
 
                     st = new StringTokenizer(line);
 
-                    String ownerString = st.nextToken(", ");
+                    String ownerString = st.nextToken(",").trim();
                     String descString = null;
                     String beginDateString = null;
                     String beginTimeString = null;
@@ -107,7 +109,7 @@ public class ViewAppointmentBook extends Activity {
                             endMerString = st.nextToken(",").trim();
 
                         } else {
-                            System.err.println("Spurious command line: " + st.nextToken(","));
+                            Toast.makeText(this, "Spurious command line: " + st.nextToken(","), Toast.LENGTH_LONG).show();
 
                         }
 
@@ -123,7 +125,7 @@ public class ViewAppointmentBook extends Activity {
 
                 }
 
-                Toast.makeText(this, "load successful", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "load successful", Toast.LENGTH_LONG).show();
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -175,36 +177,6 @@ public class ViewAppointmentBook extends Activity {
             }
 
             viewResult.setText(sb.toString());
-
-            /*
-            try {
-                fis = openFileInput(fileName);
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader br = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
-                String text = "";
-
-                while ((text = br.readLine()) != null) {
-                    sb.append(text).append("\n");
-                }
-
-                viewResult.setText(sb.toString());
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            */
-
 
         } else {
             // no appointment exists for this owner

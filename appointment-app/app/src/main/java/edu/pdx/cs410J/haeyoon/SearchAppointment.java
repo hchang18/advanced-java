@@ -137,7 +137,7 @@ public class SearchAppointment extends Activity {
 
                     st = new StringTokenizer(line);
 
-                    String ownerString = st.nextToken(", ");
+                    String ownerString = st.nextToken(",").trim();
                     String descString = null;
                     String beginDateString = null;
                     String beginTimeString = null;
@@ -171,7 +171,7 @@ public class SearchAppointment extends Activity {
                             endMerString = st.nextToken(",").trim();
 
                         } else {
-                            System.err.println("Spurious command line: " + st.nextToken(","));
+                            Toast.makeText(this, "Spurious command line: " + st.nextToken(","), Toast.LENGTH_LONG).show();
 
                         }
 
@@ -187,7 +187,7 @@ public class SearchAppointment extends Activity {
 
                 }
 
-                Toast.makeText(this, "load successful", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "load successful", Toast.LENGTH_LONG).show();
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -247,7 +247,7 @@ public class SearchAppointment extends Activity {
 
                         fos.write("\n".getBytes());
 
-                        Toast.makeText(this, "save into text successful", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(this, "save into text successful", Toast.LENGTH_LONG).show();
                     }
 
                 }

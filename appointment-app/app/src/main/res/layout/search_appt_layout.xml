@@ -11,6 +11,12 @@
         android:textStyle="bold"
         android:textSize="25sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/srch_appt_exp"
+        android:paddingBottom="10dp"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +33,6 @@
             android:layout_height="wrap_content"
             android:text=""
             android:id="@+id/srch_owner_edit_text"
-            android:textSize="20dp"
             android:hint="e.g. Pete the Cat"/>
 
     </LinearLayout>

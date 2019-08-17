@@ -7,8 +7,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.xml.sax.Parser;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,10 +22,12 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
-import edu.pdx.cs410J.ParserException;
 
 public class CreateAppointment extends Activity {
 
+
+    private AppointmentBook book = null;
+    private Appointment newAppointment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,8 +123,8 @@ public class CreateAppointment extends Activity {
 
         // create new appointment and new book
 
-        Appointment newAppointment = new Appointment(description, beginTime, endTime);
-        AppointmentBook book = new AppointmentBook(owner);
+        newAppointment = new Appointment(description, beginTime, endTime);
+        book = new AppointmentBook(owner);
         book.addAppointment(newAppointment);
 
         // instantiate necessary fields
@@ -133,10 +133,9 @@ public class CreateAppointment extends Activity {
         FileInputStream fis = null;
 
         String fileName = owner + ".txt";
+
         String filePath = getApplication().getFilesDir().getPath() + "/" + fileName;
         File file = new File(filePath);
-
-        TextView prettyPrint = findViewById(R.id.result_to_show_textview);
 
         // if appointment owner already has appointment
 
@@ -159,7 +158,7 @@ public class CreateAppointment extends Activity {
 
                     st = new StringTokenizer(line);
 
-                    String ownerString = st.nextToken(", ");
+                    String ownerString = st.nextToken(",").trim();
                     String descString = null;
                     String beginDateString = null;
                     String beginTimeString = null;
@@ -193,7 +192,7 @@ public class CreateAppointment extends Activity {
                             endMerString = st.nextToken(",").trim();
 
                         } else {
-                            System.err.println("Spurious command line: " + st.nextToken(","));
+                            Toast.makeText(this, "Spurious command line: " + st.nextToken(","), Toast.LENGTH_LONG).show();
 
                         }
 
@@ -209,7 +208,7 @@ public class CreateAppointment extends Activity {
 
                 }
 
-            Toast.makeText(this, "load successful", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "load successful", Toast.LENGTH_LONG).show();
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -229,7 +228,7 @@ public class CreateAppointment extends Activity {
 
             try {
 
-                Toast.makeText(this, "dump to text file started", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "dump to text file started", Toast.LENGTH_LONG).show();
 
                 fos = openFileOutput(fileName, MODE_PRIVATE);
 
@@ -254,7 +253,7 @@ public class CreateAppointment extends Activity {
 
                 }
 
-                Toast.makeText(this, "save into text successful", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "save into text successful", Toast.LENGTH_LONG).show();
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -269,43 +268,6 @@ public class CreateAppointment extends Activity {
                     }
                 }
             }
-
-            // load it (pretty-print)
-
-            StringBuilder sb = new StringBuilder();
-
-            String name = "Owner: " + book.getOwnerName().trim() + "\n";
-            sb.append(name);
-
-            ArrayList<Appointment> appointmentList
-                    = new ArrayList<>(book.getAppointments());
-
-            for (Appointment appointment: appointmentList) {
-
-                String desc = appointment.getDescription().trim() + " ";
-
-                sb.append(desc);
-
-                DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-                String beginTimeString = df.format(appointment.getBeginTime());
-                sb.append("from " + beginTimeString);
-
-                String endTimeString = df.format(appointment.getEndTime());
-                sb.append(" until " + endTimeString);
-
-                sb.append(" for ");
-
-                long diffInMillies = Math.abs(appointment.getEndTime().getTime() - appointment.getBeginTime().getTime());
-                long duration = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                sb.append(duration);
-
-                sb.append(" minutes");
-
-                sb.append("\n");
-
-            }
-
-            prettyPrint.setText(sb.toString());
 
 
         } else {
@@ -345,48 +307,10 @@ public class CreateAppointment extends Activity {
                 }
             }
 
-            // load it (pretty-print)
-
-            StringBuilder sb = new StringBuilder();
-
-            String name = "Owner: " + book.getOwnerName().trim() + "\n";
-            sb.append(name);
-
-            ArrayList<Appointment> appointmentList
-                    = new ArrayList<>(book.getAppointments());
-
-            for (Appointment appointment: appointmentList) {
-
-                String desc = appointment.getDescription().trim() + " ";
-
-                sb.append(desc);
-
-                DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-                String beginTimeString = df.format(appointment.getBeginTime());
-                sb.append("from " + beginTimeString);
-
-                String endTimeString = df.format(appointment.getEndTime());
-                sb.append(" until " + endTimeString);
-
-                sb.append(" for ");
-
-                long diffInMillies = Math.abs(appointment.getEndTime().getTime() - appointment.getBeginTime().getTime());
-                long duration = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                sb.append(duration);
-
-                sb.append(" minutes");
-
-                sb.append("\n");
-
-            }
-
-            prettyPrint.setText(sb.toString());
-
         }
 
-
-
     }
+
 
     private void validate(String s) {
 
@@ -396,4 +320,45 @@ public class CreateAppointment extends Activity {
 
     }
 
+
+    public void onClickPrintButton(View view) {
+
+        TextView prettyPrint = findViewById(R.id.result_to_show_textview);
+
+        if (newAppointment == null) {
+
+            prettyPrint.setText("No recently created appointment. \nCreate an appointment first\n");
+
+        } else {
+            // pretty-print the most recently added
+            StringBuilder sb = new StringBuilder();
+
+            String name = "Owner: " + book.getOwnerName().trim() + "\n";
+            sb.append(name);
+
+            String desc = newAppointment.getDescription().trim() + " ";
+
+            sb.append(desc);
+
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+            String beginTimeString = df.format(newAppointment.getBeginTime());
+            sb.append("from " + beginTimeString);
+
+            String endTimeString = df.format(newAppointment.getEndTime());
+            sb.append(" until " + endTimeString);
+
+            sb.append(" for ");
+
+            long diffInMillies = Math.abs(newAppointment.getEndTime().getTime() - newAppointment.getBeginTime().getTime());
+            long duration = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+            sb.append(duration);
+
+            sb.append(" minutes");
+
+            sb.append("\n");
+
+
+            prettyPrint.setText(sb.toString());
+        }
+    }
 }
